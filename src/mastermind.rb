@@ -1,13 +1,25 @@
 # frozen_string_literal: true
 
-#Build a Mastermind game from the command line where you have 12 turns to guess the secret code, starting with you guessing the computer’s random code.
+# Build a Mastermind game from the command line where you have 12 turns to guess the secret code,
+# starting with you guessing the computer’s random code.
 
 # Think about how you would set this problem up!
-# Build the game assuming the computer randomly selects the secret colors and the human player must guess them. Remember that you need to give the proper feedback on how good the guess was each turn!
+# Build the game assuming the computer randomly selects the secret colors and the human player must guess them. 
+# Remember that you need to give the proper feedback on how good the guess was each turn!
 # Now refactor your code to allow the human player to choose whether they want to be the creator of the secret code or the guesser.
-# Build it out so that the computer will guess if you decide to choose your own secret colors. You may choose to implement a computer strategy that follows the rules of the game or you can modify these rules.
-# If you choose to modify the rules, you can provide the computer additional information about each guess. For example, you can start by having the computer guess randomly, but keep the ones that match exactly. You can add a little bit more intelligence to the computer player so that, if the computer has guessed the right color but the wrong position, its next guess will need to include that color somewhere.
+
+# Build it out so that the computer will guess  you decide to choose your own secret colors. 
+# You may choose to implement a computer strategy that follows the rules of the game or you can modify these rules.
+
+# If you choose to modify the rules, you can provide the computer additional information about each guess.
+
+# For example, you can start by having the computer guess randomly, but keep the ones that match exactly.
+
+# You can add a little bit more intelligence to the computer player so that,  the computer has guessed the right color but the wrong position,
+# its next guess will need to include that color somewhere.
+
 # If you want to follow the rules of the game, you’ll need to research strategies for solving Mastermind, such as this post.
+
 # Post your solution below!
 
 # A simple strategy which is good and computationally much faster than Knuth's is the following (I have programmed both)
@@ -18,7 +30,8 @@
 
 # Repeat the following 2 steps:
 
-# 1) After you got the answer (number of red and number of white pegs) eliminate from the list of candidates all codes that would not have produced the same answer if they were the secret code.
+# 1) After you got the answer (number of red and number of white pegs) eliminate from the list of candidates 
+# all codes that would not have produced the same answer  they were the secret code.
 
 # 2) Pick the first element in the list and use it as new guess.
 
@@ -31,7 +44,7 @@ require 'pry-byebug'
 
 # modules
 require './module/game.rb'
-require './module/math-extend.rb'
+require './module/math_extend.rb'
 
 # Board generates a mastermind board
 class Board
@@ -40,25 +53,24 @@ class Board
   include Game
   include MathExtend
 
-  #Instance.attribute for reader/accessor, Instance.attribute = newVal for writing/accessor
-  attr_reader :code_pegs, :key_pegs, :candidate_secret_codes, :max_turns
-  attr_accessor :end_result, :decoding_board, :choice, :moves, :codemaker_code, :codecraker_color
+  #Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
+  attr_reader :code_pegs, :key_pegs, :all_secret_codes, :max_turns
+  attr_accessor :end_result, :decoding_board, :code_guess, :turn, :codemaker_code, :game_mode
 
   # Board.new
   def initialize
     game_title
     # https://www.mathsisfun.com/combinatorics/combinations-permutations.html
-    @code_pegs = %w{1 2 3 4 5 6}
-    @key_pegs = %w{B W}
+    @code_pegs = %w[1 2 3 4 5 6]
+    @key_pegs = %w[B W]
     @max_turns = 12
-    @candidate_secret_codes = fill_array_4(6) # possibilities: 6 to the 4
-
-    @end_result = %w{? ? ? ?}
+    @all_secret_codes = fill_array_4(@code_pegs.length) # possibilities: 6 to the 4
+    @game_mode = nil
+    @end_result = %w[? ? ? ?]
     @decoding_board = {code_pegs: Array.new(4*max_turns,0), key_pegs: Array.new(4*max_turns,0)}
-    @choice = '1'
-    @moves = 0
-    @codemaker_code = candidate_secret_codes.sample
-    @codecraker_color = nil                                                        
+    @code_guess = nil
+    @turn = 0
+    @codemaker_code = nil
     draw_board
   end
 
@@ -67,8 +79,10 @@ class Board
     puts "----------------"
 
     @max_turns.downto(0) do | i |
-      puts "#{@decoding_board[:code_pegs][-i]} | #{@decoding_board[:code_pegs][i-2]} | #{@decoding_board[:code_pegs][i-1]} | #{@decoding_board[:code_pegs][i]} || #{@decoding_board[:key_pegs][i-3]}#{@decoding_board[:key_pegs][i-2]}#{@decoding_board[:key_pegs][i-1]}#{@decoding_board[:key_pegs][i]} | Row #{i}"
-      puts "-----------------------" if i >= 1
+      puts "#{@decoding_board[:code_pegs][i-3]} i-3| #{@decoding_board[:code_pegs][i-2]} i-2| #{@decoding_board[:code_pegs][i-1]} i-1| #{@decoding_board[:code_pegs][i]} i|| #{@decoding_board[:key_pegs][i-3]}i-3#{@decoding_board[:key_pegs][i-2]}i-2#{@decoding_board[:key_pegs][i-1]}i-1#{@decoding_board[:key_pegs][i]}i | Row #{i}"
+      if i >= 1
+        puts "-----------------------"
+      end
     end
 
     puts "-----------------------"
@@ -77,41 +91,50 @@ class Board
     puts
   end
 
-  def insert_choice(position)
-    @choice = @choice == 'O' ? 'X' : 'O'
-    if @current_board[position] != 'X' && @current_board[position] != 'O'
-      @current_board[position] = @choice
-      puts "Inserted at position #{position}"
-      @moves += 1
-    else
-      puts "position #{position} is occupied"
-    end
+  def insert_code_guess(position)
+    @decoding_board[position] = @code_guess
+    puts "Inserted at row #{position%12} column #{position%4}"
     puts
+    @turn += 1
   end
 
   def update_board(position)
-    insert_choice(position)
+    insert_code_guess(position)
     draw_board
+  end
+
+  def play_rounds(game_mode)
+    case mode
+      when 1
+        play_as_codecracker()
+      when 2 
+        play_as_codemaker()
+      when 3
+        cpu_vs_cpu()
+    end
   end
 
   def reset_game_values
     puts 'New Game!'
     puts
-    @current_board = %w[0 1 2 3 4 5 6 7 8]
-    @choice = 'O'
-    @player1_position = nil
-    @player2_position = nil
-    @moves = 0
+
+    @end_result = %w[? ? ? ?]
+    @decoding_board = {code_pegs: Array.new(4*max_turns,0), key_pegs: Array.new(4*max_turns,0)}
+    @code_guess = nil
+    @turn = 0
+    @codemaker_code = nil
     draw_board
   end
 
-  def play_rounds
+  def play_as_codecracker()
     loop do
       until empty_cell?(@player1_position)
         puts 'Player 1 turn'
         puts
         @player1_position = gets.chomp.to_i
-        puts 'Already occupied' unless empty_cell?(@player1_position)
+        unless empty_cell?(@player1_position)
+          puts 'Already occupied'
+        end
       end
 
       update_board(@player1_position)
@@ -130,7 +153,9 @@ class Board
         puts 'Player 2 turn'
         puts
         @player2_position = gets.chomp.to_i
-        puts 'Already occupied' unless empty_cell?(@player2_position)
+        unless empty_cell?(@player2_position)
+          puts 'Already occupied' 
+        end
       end
 
       update_board(@player2_position)
@@ -147,10 +172,39 @@ class Board
     end
   end
 
+  def play_as_codemaker()
+    puts
+  end
+
+  def cpu_vs_cpu()
+    puts
+  end
+
+  def select_game_mode
+    choice = nil
+    puts "Select game mode"
+    puts
+    puts "[1]: Codecracker"
+    puts "[2]: Codemaker"
+    puts "[3]: Computer VS Computer"
+
+    loop do
+      choice = gets.chomp._to_i
+      if choice == 1 || choice == 2 || choice == 3
+        break 
+      end
+      puts "Input numbers 1, 2 or 3" 
+    end
+    choice
+  end
+
   def play_game
     loop do
-      play_rounds
-      break unless replay_game?
+      game_mode = select_game_mode
+      play_rounds(game_mode)
+      unless replay_game?
+        break 
+      end
 
       reset_game_values
     end
@@ -162,16 +216,27 @@ class Board
     # check horizontal win
     i = 0
     loop do
-      return true if board[i] == plr && board[i + 1] == plr && board[i + 2] == plr
-      break if i >= 6
+      if board[i] == plr && board[i + 1] == plr && board[i + 2] == plr
+        return true
+      end
+
+      if i >= 6
+        break
+      end
 
       i += 3
     end
     i = 0
     # check vertical win
     loop do
-      return true if board[i] == plr && board[i + 3] == plr && board[i + 6] == plr
-      break if i >= 2
+
+      if board[i] == plr && board[i + 3] == plr && board[i + 6] == plr
+        return true
+      end
+
+      if i >= 2
+        break
+      end
 
       i += 1
     end
@@ -187,17 +252,6 @@ class Board
     end
 
     false
-  end
-
-  def draw?(plr)
-    @moves == 9 && winner?(plr) == false
-  end
-
-  # predicate method
-  def empty_cell?(position)
-    return if position.nil?
-
-    current_board[position] != 'X' && current_board[position] != 'O'
   end
 end
 
