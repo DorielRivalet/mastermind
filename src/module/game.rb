@@ -1,4 +1,26 @@
+# Generic library for game loops and mechanics
 module Game
+
+  # Show game modes and return the selected option
+  def select_game_mode_from_array(arr)
+    puts 'Select game mode'
+    arr.each_with_index{|v,k| puts "[#{k+1}]: #{v}"}
+    get_option_from_array(Array.new(3){|i| i+1})
+  end
+
+  # Get a game mode option from the user
+  def get_option_from_array(arr)
+    option = nil
+    loop do
+      option = gets.chomp._to_i
+      break if arr.include?(choice)
+
+      puts 'Incorrect option'
+    end
+    option
+  end
+  
+  # prompt user if they want to restart the game
   def replay_game?
     puts 'Restart game?'
     puts
@@ -6,16 +28,13 @@ module Game
     answer == 'y' || answer.downcase == 'yes'
   end
 
+  # show the winner of the round
   def end_game_msg(plr)
     "#{plr} has won!"
   end
 
-  def game_title
-    puts "
-
-    | \/| _  _|_ _ _ _ . _  _|
-    |  |(_|_)|_(-| ||||| )(_|
-
-       "
+  # print game title with ASCII art
+  def show_game_title(title)
+    puts title
   end
 end

@@ -1,18 +1,22 @@
+# load debugger
 require 'pry-byebug'
+
+# Wanted output
 # current_Array = Array.new(slots) {|i| (i+1).to_s} #=>
 # currentboard[1] = 1111, String.new(slots) {|i| i.to_s}
 # currentboard[2] = 1112,
-# currentboard[2] = 1113,
-# currentboard[2] = 1114,
-# currentboard[2] = 1115,
-# currentboard[2] = 1116,
-# currentboard[2] = 1121,
-# currentboard[2] = 1112,
+# currentboard[3] = 1113,
+# currentboard[4] = 1114,
+# currentboard[5] = 1115,
+# currentboard[6] = 1116,
+# currentboard[7] = 1121,
+# currentboard[8] = 1112,
 # currentboard[1296] = 6666
-#
 
 # Extend math library
 module MathExtend
+
+  # Fill an array with 4 digits and 6 possible values each (senary number system)
   def fill_array_4(possibilities)
     current_board = []
     puts 'Filling board...'
