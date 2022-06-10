@@ -15,7 +15,6 @@ require 'pry-byebug'
 
 # Extend math library
 module MathExtend
-
   # Fill an array with 4 digits and 6 possible values each (senary number system)
   def fill_array_4(possibilities)
     current_board = []

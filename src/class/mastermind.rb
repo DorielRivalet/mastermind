@@ -32,18 +32,19 @@ require './class/board'
 # Mastermind board game inherits from Board class.
 # Board has MathExtend and Game modules included
 class Mastermind < Board
-
   @@board_data = {
     title: "
 
     | \/| _  _|_ _ _ _ . _  _|
     |  |(_|_)|_(-| ||||| )(_|
-  
+
        ",
     slots: 4,
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
-    game_modes: ["Codecracker", "Codemaker", "CPU vs CPU"]
+    game_modes: ['Codecracker', 'Codemaker', 'CPU vs CPU'],
+    slot_types: %i[code_pegs key_pegs],
+    end_result: %w[? ? ? ?]
   }
 
   def play_game

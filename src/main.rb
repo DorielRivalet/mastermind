@@ -4,7 +4,7 @@ require './class/mastermind'
 # Define main program
 def main
   # Create instance
-  mastermind = Mastermind.new()
+  mastermind = Mastermind.new
 
   # Launch game
   mastermind.play_game
