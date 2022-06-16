@@ -90,7 +90,7 @@ class Mastermind < Board
         @turn += 1
         # p "codemaker code #{@codemaker_code}"
       else # reached max turns
-        @codemaker_code.split('').each_with_index do |v, k|
+        @codemaker_code.chars.each_with_index do |v, k|
           @end_result[k] = v
         end
         draw_board
@@ -103,7 +103,7 @@ class Mastermind < Board
   def valid_code?(code)
     return false if code.nil?
 
-    @all_permutations_per_turn.include?(code.split(''))
+    @all_permutations_per_turn.include?(code.charss)
   end
 
   def play_as_codemaker
@@ -118,7 +118,6 @@ class Mastermind < Board
         puts
         @code_guess = @all_permutations_per_turn.sample.join('')
       end
-
       update_board(@code_guess)
       # attach debugger
       # binding.pry
@@ -130,7 +129,7 @@ class Mastermind < Board
         @turn += 1
         # p "codemaker code #{@codemaker_code}"
       else # reached max turns
-        @codemaker_code.split('').each_with_index do |v, k|
+        @codemaker_code.chars.each_with_index do |v, k|
           @end_result[k] = v
         end
         draw_board
@@ -151,7 +150,6 @@ class Mastermind < Board
         puts
         @code_guess = @all_permutations_per_turn.sample.join('')
       end
-
       update_board(@code_guess)
       # attach debugger
       # binding.pry
@@ -161,9 +159,10 @@ class Mastermind < Board
       elsif @turn <= @max_turns - 1
         @code_guess = nil
         @turn += 1
+
         # p "codemaker code #{@codemaker_code}"
       else # reached max turns
-        @codemaker_code.split('').each_with_index do |v, k|
+        @codemaker_code.chars.each_with_index do |v, k|
           @end_result[k] = v
         end
         draw_board

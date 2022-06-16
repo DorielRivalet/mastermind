@@ -103,7 +103,7 @@ class Board
   end
 
   def insert_code_guess(code_guess)
-    code_guess.split('').each_with_index do |v, k|
+    code_guess.chars.each_with_index do |v, k|
       k = k.to_i
       @game_board[:code_pegs][k + @current_slot] = v
       puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
@@ -111,8 +111,22 @@ class Board
     @current_slot += 4
   end
 
+  def insert_keypegs(code_guess)
+    code_guess.chars.each_with_index do |v, k|
+      k = k.to_i
+      if @all_permutations_per_turn.sample.join('')[k] == @game_board[:key_pegs][k + @current_slot]
+        @game_board[:key_pegs][k + @current_slot] = 'B'
+        puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
+      elsif @game_board[:key_pegs][k + @current_slot] == v
+        @game_board[:key_pegs][k + @current_slot] = 'W'
+        puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
+      end
+    end
+  end
+
   def update_board(code_guess)
     insert_code_guess(code_guess)
+    insert_keypegs(code_guess)
     draw_board
   end
 

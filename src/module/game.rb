@@ -2,7 +2,7 @@
 module Game
   # Show game modes and return the selected option
   def select_game_mode_from_array(arr)
-    puts 'Select game mode'
+    puts "Select game mode\n"
     arr.each_with_index { |v, k| puts "[#{k + 1}]: #{v}" }
     get_option_from_array(Array.new(3) { |i| i + 1 })
   end
@@ -25,10 +25,9 @@ module Game
 
   # prompt user if they want to restart the game
   def replay_game?
-    puts 'Restart game?'
-    puts
+    puts "Restart game? [y/n]\n"
     answer = gets.chomp
-    answer == 'y' || answer.downcase == 'yes'
+    answer.downcase == 'y' || answer.downcase == 'yes'
   end
 
   # show the winner of the round
