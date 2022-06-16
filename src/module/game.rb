@@ -7,7 +7,7 @@ module Game
     get_option_from_array(Array.new(3) { |i| i + 1 })
   end
 
-  def render_separator(separator_str, _length)
+  def render_separator(_separator_str, _length)
     separator_str = String.new
   end
 

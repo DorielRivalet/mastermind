@@ -131,7 +131,7 @@ class Board
     puts 'New Game!'
     puts
     @end_result = @@board_data[:end_result]
-    @game_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0)}
+    @game_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0) }
     @code_guess = nil
     @turn = @@board_data[:turn]
     @codemaker_code = nil
@@ -141,7 +141,7 @@ class Board
     draw_board
   end
 
-  def winner?()
+  def winner?
     @code_guess == @codemaker_code
   end
 end
