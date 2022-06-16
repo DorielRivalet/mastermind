@@ -7,12 +7,16 @@ module Game
     get_option_from_array(Array.new(3) { |i| i + 1 })
   end
 
+  def render_separator(separator_str,length)
+    str = String.new()
+  end
+
   # Get a game mode option from the user
   def get_option_from_array(arr)
     option = nil
     loop do
-      option = gets.chomp._to_i
-      break if arr.include?(choice)
+      option = gets.chomp.to_i
+      break if arr.include?(option)
 
       puts 'Incorrect option'
     end

@@ -13,7 +13,7 @@ class Board
 
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
   attr_reader :options, :max_turns, :title, :slots, :all_turn_combinations, :game_modes
-  attr_accessor :board_data, :end_result, :decoding_board, :code_guess, :turn, :codemaker_code
+  attr_accessor :board_data, :end_result, :game_board, :code_guess, :turn, :codemaker_code
 
   # Fill default board data
   @@board_data = {
@@ -52,34 +52,49 @@ class Board
 
   # input data into game board according to the slot_types, slots and max_turns
   def enter_board_data
-    @game_board = {}
+    game_board = {}
     @slot_types.each do |type|
-      @game_board[type] = Array.new(@slots * @max_turns, 0)
+      game_board[type] = Array.new(@slots * @max_turns, 0)
     end
+    game_board
   end
 
   # Render the board onto the terminal
   def draw_board(title)
     show_game_title(title) if title
-    puts "#{@end_result[0]} | #{@end_result[1]} | #{@end_result[2]} | #{@end_result[3]}"
-    puts '----------------'
+    puts "| #{@end_result[0]} | #{@end_result[1]} | #{@end_result[2]} | #{@end_result[3]}"
+    puts '------------------'
     # 44 45 46 47 from codepegs|| 44 45 46 47 fromkeypegs
     # 40 41 42 43 from codepegs|| 40 41 42 43 fromkeypegs
     # 36 37 38 39 from codepegs|| 36 37 38 39 fromkeypegs
     # ...
     # 0 1 2 3 from codepegs || 0 1 2 3 fromkeypegs
-    @decoding_board.each_with_index do |_v, k|
-      puts "#{@decoding_board[:code_pegs][i - 3]} #{i - 3}| #{@decoding_board[:code_pegs][i - 2]} #{i - 2}| #{@decoding_board[:code_pegs][i - 1]} #{i - 1}| #{@decoding_board[:code_pegs][-1]} #{i}|| #{@decoding_board[:key_pegs][i - 3]}#{i - 3}#{@decoding_board[:key_pegs][i - 2]}#{i - 2}#{@decoding_board[:key_pegs][i - 1]}#{i - 1}#{@decoding_board[:key_pegs][i]}#{i} | Row #{i}"
-      puts '-----------------------' if k < @decoding_board.length
+    all_slots = @slots * @max_turns
+    draw_slots(all_slots)
+    draw_options(3) # show 3 options per line
+  end
+
+  def draw_slots(all_slots)
+    i = all_slots - 1
+    row = @max_turns
+    while @slots-1 <= i do
+      puts "| #{@game_board[:code_pegs][i-3]} | #{@game_board[:code_pegs][i - 2]} | #{@game_board[:code_pegs][i - 1]} | #{@game_board[:code_pegs][i]} || #{@game_board[:key_pegs][i - 3]}#{@game_board[:key_pegs][i - 2]}#{@game_board[:key_pegs][i - 1]}#{@game_board[:key_pegs][i]} | Row #{row}"
+      puts '-------------------------' if @slots-1 <= i
+      i -= @slots
+      row -= 1
     end
-    puts '-----------------------'
-    puts '1  2  3  4'
-    puts '5  6  7  8'
+  end
+
+  # https://stackoverflow.com/questions/48511309/print-array-items-3-per-line
+  def draw_options(options_per_line)
+    @options.each_slice(options_per_line).with_index do |part, ind|
+      puts part.join(", ") + (ind == options_per_line ? "" : ",")
+    end
     puts
   end
 
   def insert_code_guess(position)
-    @decoding_board[position] = @code_guess
+    @game_board[position] = @code_guess
     puts "Inserted at row #{position % 12} column #{position % 4}"
     puts
     @turn += 1
@@ -106,7 +121,7 @@ class Board
     puts
 
     @end_result = %w[? ? ? ?]
-    @decoding_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0) }
+    @game_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0) }
     @code_guess = nil
     @turn = 0
     @codemaker_code = nil
