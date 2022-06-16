@@ -11,7 +11,8 @@ def main
 
   # Show program metadata at game end
   puts __FILE__
-  puts 'lines of code: ' + __LINE__
+  puts 'lines of code: '
+  p __LINE__
 end
 
 # Run program

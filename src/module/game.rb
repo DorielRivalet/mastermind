@@ -7,8 +7,8 @@ module Game
     get_option_from_array(Array.new(3) { |i| i + 1 })
   end
 
-  def render_separator(separator_str,length)
-    str = String.new()
+  def render_separator(separator_str, _length)
+    separator_str = String.new
   end
 
   # Get a game mode option from the user
@@ -32,8 +32,8 @@ module Game
   end
 
   # show the winner of the round
-  def end_game_msg(plr)
-    "#{plr} has won!"
+  def end_game_msg(code_guess)
+    "Correct! The code is #{code_guess}"
   end
 
   # print game title with ASCII art

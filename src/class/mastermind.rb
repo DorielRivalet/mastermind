@@ -44,7 +44,11 @@ class Mastermind < Board
     max_turns: 12,
     game_modes: ['Codecracker', 'Codemaker', 'CPU vs CPU'],
     slot_types: %i[code_pegs key_pegs],
-    end_result: %w[? ? ? ?]
+    end_result: %w[? ? ? ?],
+    turn: 1,
+    code_guess: '',
+    all_slots: 12 * 4,
+    current_slot: 0
   }
 
   def play_game
@@ -58,44 +62,34 @@ class Mastermind < Board
     puts 'Game ended'
   end
 
+  def valid_input?(input)
+    return false if input.nil?
+
+    input.length == @slots
+  end
+
   def play_as_codecracker
+    @codemaker_code = @all_permutations_per_turn.sample.join("")
     loop do
-      until empty_cell?(@player1_position)
-        puts 'Player 1 turn'
+      until valid_input?(@code_guess)
+        puts "Insert a code [#{@slots} slots, #{@options.length} colors]"
         puts
-        @player1_position = gets.chomp.to_i
-        puts 'Already occupied' unless empty_cell?(@player1_position)
+        @code_guess = gets.chomp.to_s
+        puts 'Wrong input' unless valid_input?(@code_guess)
       end
 
-      update_board(@player1_position)
+      update_board(@code_guess)
       # attach debugger
       # binding.pry
-      if draw?('X')
-        puts 'Draw!'
+      if winner?()
+        puts end_game_msg(@code_guess)
         break
-      end
-
-      if winner?('X')
-        puts end_game_msg('X')
-        break
-      end
-
-      until empty_cell?(@player2_position)
-        puts 'Player 2 turn'
-        puts
-        @player2_position = gets.chomp.to_i
-        puts 'Already occupied' unless empty_cell?(@player2_position)
-      end
-
-      update_board(@player2_position)
-
-      if draw?('O')
-        puts 'Draw!'
-        break
-      end
-
-      if winner?('O')
-        puts end_game_msg('O')
+      elsif @turn <= @max_turns-1
+        @code_guess = nil
+        @turn += 1
+        # p "codemaker code #{@codemaker_code}"
+      else # reached max turns
+        puts 'Codemaker won!'
         break
       end
     end
