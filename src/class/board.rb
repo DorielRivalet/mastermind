@@ -72,8 +72,7 @@ class Board
   # Render the board onto the terminal
   def draw_board(title = nil)
     show_game_title(title) if title
-    puts "| #{@end_result[0]} | #{@end_result[1]} | #{@end_result[2]} | #{@end_result[3]}"
-    puts '------------------'
+    puts "| #{@end_result[0]} | #{@end_result[1]} | #{@end_result[2]} | #{@end_result[3]}\n------------------"
     # 44 45 46 47 from codepegs|| 44 45 46 47 fromkeypegs
     # 40 41 42 43 from codepegs|| 40 41 42 43 fromkeypegs
     # 36 37 38 39 from codepegs|| 36 37 38 39 fromkeypegs
@@ -97,9 +96,8 @@ class Board
   # https://stackoverflow.com/questions/48511309/print-array-items-3-per-line
   def draw_options(options_per_line)
     @options.each_slice(options_per_line).with_index do |part, ind|
-      puts part.join(', ') + (ind == options_per_line ? '' : ',')
+      puts "#{part.join(', ')} #{(ind == options_per_line ? '' : ',')} \n"
     end
-    puts
   end
 
   def insert_code_guess(code_guess)
@@ -108,18 +106,20 @@ class Board
       @game_board[:code_pegs][k + @current_slot] = v
       puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
     end
-    @current_slot += 4
   end
 
   def insert_keypegs(code_guess)
+    # p @codemaker_code
     code_guess.chars.each_with_index do |v, k|
       k = k.to_i
-      if @all_permutations_per_turn.sample.join('')[k] == @game_board[:key_pegs][k + @current_slot]
+      if @codemaker_code.chars[k] == v
+        # p "@codemaker_code.chars[k] #{@codemaker_code.chars[k]} == #{v}"
         @game_board[:key_pegs][k + @current_slot] = 'B'
-        puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
-      elsif @game_board[:key_pegs][k + @current_slot] == v
+        # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
+      elsif @codemaker_code.chars.include?(v)
+        # p "@codemaker_code.chars.find(v) #{v}"
         @game_board[:key_pegs][k + @current_slot] = 'W'
-        puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
+        # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
       end
     end
   end
@@ -127,23 +127,18 @@ class Board
   def update_board(code_guess)
     insert_code_guess(code_guess)
     insert_keypegs(code_guess)
+    @current_slot += 4
     draw_board
   end
 
   def play_rounds(game_mode)
-    case game_mode
-    when 1
-      play_as_codecracker
-    when 2
-      play_as_codemaker
-    when 3
-      cpu_vs_cpu
-    end
+    play_as_codecracker if game_mode == 1
+    play_as_codemaker if game_mode == 2
+    cpu_vs_cpu if game_mode == 3
   end
 
   def reset_game_values
-    puts 'New Game!'
-    puts
+    puts "New Game!\n"
     @end_result = @@board_data[:end_result]
     @game_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0) }
     @code_guess = nil
@@ -158,4 +153,5 @@ class Board
   def winner?
     @code_guess == @codemaker_code
   end
+
 end

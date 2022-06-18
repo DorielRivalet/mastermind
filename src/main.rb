@@ -10,9 +10,7 @@ def main
   mastermind.play_game
 
   # Show program metadata at game end
-  puts __FILE__
-  puts 'lines of code: '
-  p __LINE__
+  puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
 end
 
 # Run program
