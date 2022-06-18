@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Generic library for game loops and mechanics
 module Game
   # Show game modes and return the selected option

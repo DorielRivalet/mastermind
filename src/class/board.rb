@@ -4,12 +4,14 @@ require 'pry-byebug'
 # load modules
 require './module/game'
 require './module/math_extend'
+require './module/board_ui'
 
 # Board generates a mastermind board
 class Board
-  # mixins
+  # mixins (extend for class, include for instance of class)
   include Game
   include MathExtend
+  include BoardUi
 
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
   attr_reader :options, :max_turns, :title, :slots, :all_turn_combinations, :game_modes
@@ -58,6 +60,7 @@ class Board
 
     @game_board = enter_board_data
     draw_board(@title)
+    puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
   end
 
   # input data into game board according to the slot_types, slots and max_turns
@@ -69,42 +72,11 @@ class Board
     game_board
   end
 
-  # Render the board onto the terminal
-  def draw_board(title = nil)
-    show_game_title(title) if title
-    puts "| #{@end_result[0]} | #{@end_result[1]} | #{@end_result[2]} | #{@end_result[3]}\n------------------"
-    # 44 45 46 47 from codepegs|| 44 45 46 47 fromkeypegs
-    # 40 41 42 43 from codepegs|| 40 41 42 43 fromkeypegs
-    # 36 37 38 39 from codepegs|| 36 37 38 39 fromkeypegs
-    # ...
-    # 0 1 2 3 from codepegs || 0 1 2 3 fromkeypegs
-    draw_slots(@all_slots)
-    draw_options(3) # show 3 options per line
-  end
-
-  def draw_slots(all_slots)
-    i = all_slots - 1
-    row = @max_turns
-    while @slots - 1 <= i
-      puts "| #{@game_board[:code_pegs][i - 3]} | #{@game_board[:code_pegs][i - 2]} | #{@game_board[:code_pegs][i - 1]} | #{@game_board[:code_pegs][i]} || #{@game_board[:key_pegs][i - 3]}#{@game_board[:key_pegs][i - 2]}#{@game_board[:key_pegs][i - 1]}#{@game_board[:key_pegs][i]} | Row #{row}"
-      puts '-------------------------' if @slots - 1 <= i
-      i -= @slots
-      row -= 1
-    end
-  end
-
-  # https://stackoverflow.com/questions/48511309/print-array-items-3-per-line
-  def draw_options(options_per_line)
-    @options.each_slice(options_per_line).with_index do |part, ind|
-      puts "#{part.join(', ')} #{(ind == options_per_line ? '' : ',')} \n"
-    end
-  end
-
   def insert_code_guess(code_guess)
     code_guess.chars.each_with_index do |v, k|
       k = k.to_i
       @game_board[:code_pegs][k + @current_slot] = v
-      puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
+      # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
     end
   end
 
@@ -132,14 +104,14 @@ class Board
   end
 
   def play_rounds(game_mode)
-    play_as_codecracker if game_mode == 1
-    play_as_codemaker if game_mode == 2
+    play_as_codecracker(game_mode) if game_mode == 1
+    play_as_codemaker(game_mode) if game_mode == 2
     cpu_vs_cpu if game_mode == 3
   end
 
   def reset_game_values
     puts "New Game!\n"
-    @end_result = @@board_data[:end_result]
+    @end_result = %w[? ? ? ?]
     @game_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0) }
     @code_guess = nil
     @turn = @@board_data[:turn]
@@ -153,5 +125,4 @@ class Board
   def winner?
     @code_guess == @codemaker_code
   end
-
 end

@@ -15,11 +15,9 @@ require 'pry-byebug'
 
 # Extend math library
 module MathExtend
-
   # prune keys according to keypegs
-  def swazek(keypegs)
-    
-  end
+  def swaszek(keypegs); end
+
   # Fill an array with 4 digits and 6 possible values each (senary number system)
   def fill_array_4(possibilities)
     current_board = []

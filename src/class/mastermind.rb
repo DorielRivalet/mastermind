@@ -60,6 +60,7 @@ class Mastermind < Board
       reset_game_values
     end
     puts 'Game ended'
+    puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
   end
 
   def valid_input?(input)
@@ -68,107 +69,92 @@ class Mastermind < Board
     input.length == @slots
   end
 
-  def play_as_codecracker
-    @codemaker_code = @all_permutations_per_turn.sample.join('')
-
-    loop do
-      until valid_input?(@code_guess)
-        puts "Insert a code [#{@slots} slots, #{@options.length} colors]"
-        puts
-        @code_guess = gets.chomp.to_s
-        puts 'Wrong input' unless valid_input?(@code_guess)
-      end
-
-      update_board(@code_guess)
-      # attach debugger
-      # binding.pry
-      if winner?
-        puts end_game_msg(@code_guess)
-        break
-      elsif @turn <= @max_turns - 1
-        @code_guess = nil
-        @turn += 1
-        # p "codemaker code #{@codemaker_code}"
-      else # reached max turns
-        @codemaker_code.chars.each_with_index do |v, k|
-          @end_result[k] = v
-        end
-        draw_board
-        puts "Codemaker won! The code was #{@codemaker_code}"
-        break
-      end
+  def annnounce_codemaker_win
+    @codemaker_code.chars.each_with_index do |v, k|
+      @end_result[k] = v
     end
+    draw_board
+    puts "Codemaker won! The code was #{@codemaker_code}"
+  end
+
+  def game_end?
+    if @turn >= @max_turns
+      annnounce_codemaker_win
+      return true
+    end
+
+    if winner?
+      puts end_game_msg(@code_guess)
+      return true
+    end
+
+    false
   end
 
   def valid_code?(code)
     return false if code.nil?
 
-    @all_permutations_per_turn.include?(code.charss)
+    @all_permutations_per_turn.include?(code.chars)
   end
 
-  def play_as_codemaker
-    until valid_code?(@codemaker_code)
-      puts "Make a code [#{@slots} slots, #{@options.length} colors]"
-      @codemaker_code = gets.chomp.to_s
-      puts 'Invalid code' unless valid_code?(@codemaker_code)
-    end
-    loop do
+  def increment_turn
+    @code_guess = nil
+    @turn += 1
+  end
+
+  def check_code(game_mode)
+    case game_mode
+    when 1 # Codecracker
       until valid_input?(@code_guess)
-        puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
-        puts
-        @code_guess = @all_permutations_per_turn.sample.join('')
+        @code_guess = gets.chomp.to_s
+        # puts 'Wrong input' unless valid_input?(@code_guess)
       end
+    when 2 # Codemaker
+      until valid_code?(@codemaker_code)
+        @codemaker_code = gets.chomp.to_s
+        # puts 'Invalid code' unless valid_code?(@codemaker_code)
+      end
+    end
+  end
+
+  def play_as_codecracker(game_mode)
+    @codemaker_code = @all_permutations_per_turn.sample.join('')
+    loop do
+      puts "Insert a code [#{@slots} slots, #{@options.length} colors]"
+      check_code(game_mode)
       update_board(@code_guess)
       # attach debugger
       # binding.pry
-      if winner?
-        puts end_game_msg(@code_guess)
-        break
-      elsif @turn <= @max_turns - 1
-        @code_guess = nil
-        @turn += 1
-        # p "codemaker code #{@codemaker_code}"
-      else # reached max turns
-        @codemaker_code.chars.each_with_index do |v, k|
-          @end_result[k] = v
-        end
-        draw_board
-        puts "Codemaker won! The code was #{@codemaker_code}"
-        break
-      end
+      break if game_end?
+
+      increment_turn
+    end
+  end
+
+  def play_as_codemaker(game_mode)
+    puts "Make a code [#{@slots} slots, #{@options.length} colors]"
+    check_code(game_mode)
+    loop do
+      # puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
+      @code_guess = @all_permutations_per_turn.sample.join('')
+      update_board(@code_guess)
+      break if game_end?
+
+      increment_turn
     end
   end
 
   def cpu_vs_cpu
-    until valid_code?(@codemaker_code)
-      puts "Making a code ... [#{@slots} slots, #{@options.length} colors]"
-      @codemaker_code = @all_permutations_per_turn.sample.join('')
-    end
+    # puts "Making a code ... [#{@slots} slots, #{@options.length} colors]"
+    @codemaker_code = @all_permutations_per_turn.sample.join('')
     loop do
-      until valid_input?(@code_guess)
-        puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
-        puts
-        @code_guess = @all_permutations_per_turn.sample.join('')
-      end
+      # puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
+      # puts
+      @code_guess = @all_permutations_per_turn.sample.join('')
       update_board(@code_guess)
-      # attach debugger
-      # binding.pry
-      if winner?
-        puts end_game_msg(@code_guess)
-        break
-      elsif @turn <= @max_turns - 1
-        @code_guess = nil
-        @turn += 1
+      break if game_end?
 
-        # p "codemaker code #{@codemaker_code}"
-      else # reached max turns
-        @codemaker_code.chars.each_with_index do |v, k|
-          @end_result[k] = v
-        end
-        draw_board
-        puts "Codemaker won! The code was #{@codemaker_code}"
-        break
-      end
+      increment_turn
     end
   end
 end
