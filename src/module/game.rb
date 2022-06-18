@@ -9,10 +9,6 @@ module Game
     get_option_from_array(Array.new(3) { |i| i + 1 })
   end
 
-  def render_separator(_separator_str, _length)
-    separator_str = String.new
-  end
-
   # Get a game mode option from the user
   def get_option_from_array(arr)
     option = nil

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # load debugger
 require 'pry-byebug'
 
@@ -14,8 +16,8 @@ class Board
   include BoardUi
 
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
-  attr_reader :options, :max_turns, :title, :slots, :all_turn_combinations, :game_modes
-  attr_accessor :board_data, :end_result, :game_board, :code_guess, :turn, :codemaker_code
+  attr_reader :options, :max_turns, :title, :slots, :game_modes
+  attr_accessor :board_data, :end_result, :game_board, :code_guess, :turn, :codemaker_code, :all_permutations_per_turn
 
   # Fill default board data
   @@board_data = {
@@ -35,6 +37,25 @@ class Board
 
   # [Board.new] Create default values and draw the initial state
   def initialize
+    puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
+    # p @all_slots
+    # @all_secret_codes = fill_array_4(@code_pegs.length) # possibilities: 6 to the 4
+    # https://www.mathsisfun.com/combinatorics/combinations-permutations.html
+    # all possible codebreaker guesses per turn
+    fill_default_board
+    @code_guess = @@board_data[:code_guess]
+    @codemaker_code = @@board_data[:codemaker_code]
+    @all_permutations_per_turn = @options.permutation(@slots).to_a
+    # @key_pegs = %w[B W]
+    # https://stackoverflow.com/questions/4410076/how-can-i-initialize-an-array-inside-a-hash-in-ruby
+    # @code_guess = nil
+    # @turn = 0
+    # @codemaker_code = nil
+    @game_board = enter_board_data
+    draw_board(@title)
+  end
+
+  def fill_default_board
     @title = @@board_data[:title]
     @slots = @@board_data[:slots]
     @options = @@board_data[:options]
@@ -43,24 +64,8 @@ class Board
     @game_modes = @@board_data[:game_modes]
     @end_result = @@board_data[:end_result]
     @turn = @@board_data[:turn]
-    @code_guess = @@board_data[:code_guess]
     @all_slots = @@board_data[:all_slots]
     @current_slot = @@board_data[:current_slot]
-    @codemaker_code = @@board_data[:codemaker_code]
-    # p @all_slots
-    # @all_secret_codes = fill_array_4(@code_pegs.length) # possibilities: 6 to the 4
-    # https://www.mathsisfun.com/combinatorics/combinations-permutations.html
-    # all possible codebreaker guesses per turn
-    @all_permutations_per_turn = @options.permutation(@slots).to_a
-    # @key_pegs = %w[B W]
-    # https://stackoverflow.com/questions/4410076/how-can-i-initialize-an-array-inside-a-hash-in-ruby
-    # @code_guess = nil
-    # @turn = 0
-    # @codemaker_code = nil
-
-    @game_board = enter_board_data
-    draw_board(@title)
-    puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
   end
 
   # input data into game board according to the slot_types, slots and max_turns

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # load debugger
 require 'pry-byebug'
 
@@ -15,41 +17,37 @@ require 'pry-byebug'
 
 # Extend math library
 module MathExtend
-  # prune keys according to keypegs
-  def swaszek(keypegs); end
-
   # Fill an array with 4 digits and 6 possible values each (senary number system)
-  def fill_array_4(possibilities)
-    current_board = []
-    puts 'Filling board...'
-    for i in 1..possibilities do
-      for j in 1..possibilities do
-        for k in 1..possibilities do
-          for l in 1..possibilities do
-            current_board << "#{i}#{j}#{k}#{l}"
-            # puts "#{i}#{j}#{k}#{l}"
-          end
-        end
-      end
-    end
-    puts 'Total possible choices: ' + current_board.length.to_s + '!'
-    puts
-    current_board
-  end
+  # def fill_array_four(possibilities)
+  #   current_board = []
+  #   puts 'Filling board...'
+  #   for i in 1..possibilities do
+  #     for j in 1..possibilities do
+  #       for k in 1..possibilities do
+  #         for l in 1..possibilities do
+  #           current_board << "#{i}#{j}#{k}#{l}"
+  #           # puts "#{i}#{j}#{k}#{l}"
+  #         end
+  #       end
+  #     end
+  #   end
+  #   puts "Total possible choices: #{current_board.length}!"
+  #   current_board
+  # end
 
-  def populate_array(slots, possibilities)
-    current_board = []
-    slots = Array.new(slots) { |i| (i + 1).to_s }
-    possibilities = Array.new(possibilities) { |i| (i + 1).to_s }
-    permutations = possibilities.length**slots.length
+  # def populate_array(slots, possibilities)
+  #   current_board = []
+  #   # slots = Array.new(slots) { |i| (i + 1).to_s }
+  #   # possibilities = Array.new(possibilities) { |i| (i + 1).to_s }
+  #   # permutations = possibilities.length**slots.length
 
-    # for i in 0..permutations-1
-    # current_board[i] = # from_deci("",possibilities.length,i)
-    # end
+  #   # for i in 0..permutations-1
+  #   # current_board[i] = # from_deci("",possibilities.length,i)
+  #   # end
 
-    p current_board.first, current_board.last
-    current_board
-  end
+  #   p current_board.first, current_board.last
+  #   current_board
+  # end
   # https://www.geeksforgeeks.org/convert-base-decimal-vice-versa/
   # Python3 Program to convert decimal to
   # any given base
