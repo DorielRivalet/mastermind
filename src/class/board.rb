@@ -17,7 +17,8 @@ class Board
 
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
   attr_reader :options, :max_turns, :title, :slots, :game_modes
-  attr_accessor :board_data, :end_result, :game_board, :code_guess, :turn, :code_maker_code, :all_permutations_per_turn
+  attr_accessor :board_data, :end_result, :game_board, :code_guess,
+                :turn, :code_maker_code, :all_permutations_per_turn, :possible_candidates
 
   # Fill default board data
   @@board_data = {
@@ -45,7 +46,10 @@ class Board
     fill_default_board
     @code_guess = @@board_data[:code_guess]
     @code_maker_code = @@board_data[:code_maker_code]
+
+    # Create the list 1111,...,6666 of all candidate secret codes
     @all_permutations_per_turn = @options.permutation(@slots).to_a
+    @possible_candidates = @options.permutation(@slots).to_a
     # @key_pegs = %w[B W]
     # https://stackoverflow.com/questions/4410076/how-can-i-initialize-an-array-inside-a-hash-in-ruby
     # @code_guess = nil
@@ -78,6 +82,7 @@ class Board
   end
 
   def insert_code_guess(code_guess)
+    code_guess = '1234' if code_guess.nil?
     code_guess.chars.each_with_index do |char, k|
       k = k.to_i
       @game_board[:code_pegs][k + @current_slot] = char
@@ -87,13 +92,14 @@ class Board
 
   def insert_key_pegs(code_guess)
     # p @code_maker_code
+    code_guess = '1234' if code_guess.nil?
     code_guess.chars.each_with_index do |char, k|
       k = k.to_i
       if @code_maker_code.chars[k] == char
         # p "@code_maker_code.chars[k] #{@code_maker_code.chars[k]} == #{v}"
         @game_board[:key_pegs][k + @current_slot] = 'R'
         # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
-      elsif @code_maker_code.chars.include?(v)
+      elsif @code_maker_code.chars.include?(char)
         # p "@code_maker_code.chars.find(v) #{v}"
         @game_board[:key_pegs][k + @current_slot] = 'W'
         # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
@@ -116,15 +122,20 @@ class Board
 
   def reset_game_values
     puts "New Game!\n"
+    @game_board = { code_pegs: Array.new(4 * @max_turns, 0), key_pegs: Array.new(4 * @max_turns, 0) }
+    set_default_game_values
+    @game_board = enter_board_data
+    draw_board
+  end
+
+  def set_default_game_values
     @end_result = %w[? ? ? ?]
-    @game_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0) }
     @code_guess = nil
     @turn = @@board_data[:turn]
     @code_maker_code = nil
     @current_slot = @@board_data[:current_slot]
     @code_maker_code = @@board_data[:code_maker_code]
-    @game_board = enter_board_data
-    draw_board
+    @possible_candidates = @options.permutation(@slots).to_a
   end
 
   def winner?

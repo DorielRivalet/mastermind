@@ -115,11 +115,10 @@ class Mastermind < Board
 
   # loop automatic guesses
   def loop_guesses
-    candidates = @all_permutations_per_turn
     loop do
       # puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
       # @code_guess = @all_permutations_per_turn.sample.join('')
-      @code_guess = swaszek(candidates)
+      @code_guess = swaszek
       update_board(@code_guess)
       break if game_end?
 
