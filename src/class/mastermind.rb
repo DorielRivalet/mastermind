@@ -38,7 +38,7 @@ class Mastermind < Board
     slots: 4,
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
-    game_modes: ['Codecracker', 'Codemaker', 'CPU vs CPU'],
+    game_modes: ['Code Cracker', 'Code Maker', 'CPU vs CPU'],
     slot_types: %i[code_pegs key_pegs],
     end_result: %w[? ? ? ?],
     turn: 1,
@@ -65,17 +65,17 @@ class Mastermind < Board
     input.length == @slots
   end
 
-  def annnounce_codemaker_win
-    @codemaker_code.chars.each_with_index do |v, k|
-      @end_result[k] = v
+  def announce_code_maker_win
+    @code_maker_code.chars.each_with_index do |char, k|
+      @end_result[k] = char
     end
     draw_board
-    puts "Codemaker won! The code was #{@codemaker_code}"
+    puts "Code Maker won! The code was #{@code_maker_code}"
   end
 
   def game_end?
     if @turn >= @max_turns
-      annnounce_codemaker_win
+      announce_code_maker_win
       return true
     end
 
@@ -100,15 +100,15 @@ class Mastermind < Board
 
   def check_code(game_mode)
     case game_mode
-    when 1 # Codecracker
+    when 1 # code_cracker
       until valid_input?(@code_guess)
         @code_guess = gets.chomp.to_s
         # puts 'Wrong input' unless valid_input?(@code_guess)
       end
-    when 2 # Codemaker
-      until valid_code?(@codemaker_code)
-        @codemaker_code = gets.chomp.to_s
-        # puts 'Invalid code' unless valid_code?(@codemaker_code)
+    when 2 # code_maker
+      until valid_code?(@code_maker_code)
+        @code_maker_code = gets.chomp.to_s
+        # puts 'Invalid code' unless valid_code?(@code_maker_code)
       end
     end
   end
@@ -119,7 +119,7 @@ class Mastermind < Board
     loop do
       # puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
       # @code_guess = @all_permutations_per_turn.sample.join('')
-      swaszek(@game_board[:key_pegs], candidates)
+      @code_guess = swaszek(candidates)
       update_board(@code_guess)
       break if game_end?
 
@@ -127,8 +127,8 @@ class Mastermind < Board
     end
   end
 
-  def play_as_codecracker(game_mode)
-    @codemaker_code = @all_permutations_per_turn.sample.join('')
+  def play_as_code_cracker(game_mode)
+    @code_maker_code = @all_permutations_per_turn.sample.join('')
     loop do
       puts "Insert a code [#{@slots} slots, #{@options.length} colors]"
       check_code(game_mode)
@@ -141,7 +141,7 @@ class Mastermind < Board
     end
   end
 
-  def play_as_codemaker(game_mode)
+  def play_as_code_maker(game_mode)
     puts "Make a code [#{@slots} slots, #{@options.length} colors]"
     check_code(game_mode)
     loop_guesses
@@ -149,7 +149,7 @@ class Mastermind < Board
 
   def cpu_vs_cpu
     # puts "Making a code ... [#{@slots} slots, #{@options.length} colors]"
-    @codemaker_code = @all_permutations_per_turn.sample.join('')
+    @code_maker_code = @all_permutations_per_turn.sample.join('')
     loop_guesses
   end
 end

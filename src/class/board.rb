@@ -17,7 +17,7 @@ class Board
 
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
   attr_reader :options, :max_turns, :title, :slots, :game_modes
-  attr_accessor :board_data, :end_result, :game_board, :code_guess, :turn, :codemaker_code, :all_permutations_per_turn
+  attr_accessor :board_data, :end_result, :game_board, :code_guess, :turn, :code_maker_code, :all_permutations_per_turn
 
   # Fill default board data
   @@board_data = {
@@ -32,7 +32,7 @@ class Board
     code_guess: '123456',
     all_slots: 12 * 4, # slots times max turns
     current_slot: 0,
-    codemaker_code: nil
+    code_maker_code: nil
   }
 
   # [Board.new] Create default values and draw the initial state
@@ -44,13 +44,13 @@ class Board
     # all possible codebreaker guesses per turn
     fill_default_board
     @code_guess = @@board_data[:code_guess]
-    @codemaker_code = @@board_data[:codemaker_code]
+    @code_maker_code = @@board_data[:code_maker_code]
     @all_permutations_per_turn = @options.permutation(@slots).to_a
     # @key_pegs = %w[B W]
     # https://stackoverflow.com/questions/4410076/how-can-i-initialize-an-array-inside-a-hash-in-ruby
     # @code_guess = nil
     # @turn = 0
-    # @codemaker_code = nil
+    # @code_maker_code = nil
     @game_board = enter_board_data
     draw_board(@title)
   end
@@ -78,23 +78,23 @@ class Board
   end
 
   def insert_code_guess(code_guess)
-    code_guess.chars.each_with_index do |v, k|
+    code_guess.chars.each_with_index do |char, k|
       k = k.to_i
-      @game_board[:code_pegs][k + @current_slot] = v
+      @game_board[:code_pegs][k + @current_slot] = char
       # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
     end
   end
 
-  def insert_keypegs(code_guess)
-    # p @codemaker_code
-    code_guess.chars.each_with_index do |v, k|
+  def insert_key_pegs(code_guess)
+    # p @code_maker_code
+    code_guess.chars.each_with_index do |char, k|
       k = k.to_i
-      if @codemaker_code.chars[k] == v
-        # p "@codemaker_code.chars[k] #{@codemaker_code.chars[k]} == #{v}"
-        @game_board[:key_pegs][k + @current_slot] = 'B'
+      if @code_maker_code.chars[k] == char
+        # p "@code_maker_code.chars[k] #{@code_maker_code.chars[k]} == #{v}"
+        @game_board[:key_pegs][k + @current_slot] = 'R'
         # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
-      elsif @codemaker_code.chars.include?(v)
-        # p "@codemaker_code.chars.find(v) #{v}"
+      elsif @code_maker_code.chars.include?(v)
+        # p "@code_maker_code.chars.find(v) #{v}"
         @game_board[:key_pegs][k + @current_slot] = 'W'
         # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
       end
@@ -103,14 +103,14 @@ class Board
 
   def update_board(code_guess)
     insert_code_guess(code_guess)
-    insert_keypegs(code_guess)
+    insert_key_pegs(code_guess)
     @current_slot += 4
     draw_board
   end
 
   def play_rounds(game_mode)
-    play_as_codecracker(game_mode) if game_mode == 1
-    play_as_codemaker(game_mode) if game_mode == 2
+    play_as_code_cracker(game_mode) if game_mode == 1
+    play_as_code_maker(game_mode) if game_mode == 2
     cpu_vs_cpu if game_mode == 3
   end
 
@@ -120,14 +120,14 @@ class Board
     @game_board = { code_pegs: Array.new(4 * max_turns, 0), key_pegs: Array.new(4 * max_turns, 0) }
     @code_guess = nil
     @turn = @@board_data[:turn]
-    @codemaker_code = nil
+    @code_maker_code = nil
     @current_slot = @@board_data[:current_slot]
-    @codemaker_code = @@board_data[:codemaker_code]
+    @code_maker_code = @@board_data[:code_maker_code]
     @game_board = enter_board_data
     draw_board
   end
 
   def winner?
-    @code_guess == @codemaker_code
+    @code_guess == @code_maker_code
   end
 end

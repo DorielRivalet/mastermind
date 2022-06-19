@@ -5,15 +5,15 @@ require 'pry-byebug'
 
 # Wanted output
 # current_Array = Array.new(slots) {|i| (i+1).to_s} #=>
-# currentboard[1] = 1111, String.new(slots) {|i| i.to_s}
-# currentboard[2] = 1112,
-# currentboard[3] = 1113,
-# currentboard[4] = 1114,
-# currentboard[5] = 1115,
-# currentboard[6] = 1116,
-# currentboard[7] = 1121,
-# currentboard[8] = 1112,
-# currentboard[1296] = 6666
+# current_board[1] = 1111, String.new(slots) {|i| i.to_s}
+# current_board[2] = 1112,
+# current_board[3] = 1113,
+# current_board[4] = 1114,
+# current_board[5] = 1115,
+# current_board[6] = 1116,
+# current_board[7] = 1121,
+# current_board[8] = 1112,
+# current_board[1296] = 6666
 
 # Extend math library
 module MathExtend
@@ -42,7 +42,7 @@ module MathExtend
   #   # permutations = possibilities.length**slots.length
 
   #   # for i in 0..permutations-1
-  #   # current_board[i] = # from_deci("",possibilities.length,i)
+  #   # current_board[i] = # from_decimal("",possibilities.length,i)
   #   # end
 
   #   p current_board.first, current_board.last
@@ -71,7 +71,7 @@ module MathExtend
   end
 
   # Utility function to reverse a string
-  # def strev(str):
+  # def stringReverse(str):
 
   #   len = len(str);
   #   for i in range(int(len / 2)):
@@ -79,7 +79,7 @@ module MathExtend
   #     str[i] = str[len - i - 1];
   #     str[len - i - 1] = temp;
 
-  def strev(str)
+  def string_reverse(str)
     len = str.length
     for i in 0..len / 2
       temp = str[i]
@@ -90,7 +90,7 @@ module MathExtend
 
   # Function to convert a given decimal
   # number to a base 'base' and
-  # def fromDeci(res, base, inputNum):
+  # def fromDecimal(res, base, inputNum):
   #   index = 0; # Initialize index of result
   #   # Convert input number is given base
   #   # by repeatedly dividing it by base
@@ -102,7 +102,7 @@ module MathExtend
   #   res = res[::-1];
   #   return res;
 
-  def from_deci(res, base, input_num)
+  def from_decimal(res, base, input_num)
     while input_num.positive?
       res += re_val(input_num % base)
       input_num = (input_num / base).to_i

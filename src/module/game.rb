@@ -5,7 +5,7 @@ module Game
   # Show game modes and return the selected option
   def select_game_mode_from_array(arr)
     puts "Select game mode\n"
-    arr.each_with_index { |v, k| puts "[#{k + 1}]: #{v}" }
+    arr.each_with_index { |game_mode, k| puts "[#{k + 1}]: #{game_mode}" }
     get_option_from_array(Array.new(3) { |i| i + 1 })
   end
 

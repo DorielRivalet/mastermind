@@ -19,11 +19,11 @@ module BoardUi
     show_game_title(title) if title
     puts "| #{@end_result[0]} | #{@end_result[1]} | #{@end_result[2]} | #{@end_result[3]}"
     puts '-' * 25
-    # 44 45 46 47 from codepegs|| 44 45 46 47 fromkeypegs
-    # 40 41 42 43 from codepegs|| 40 41 42 43 fromkeypegs
-    # 36 37 38 39 from codepegs|| 36 37 38 39 fromkeypegs
+    # 44 45 46 47 from code_pegs|| 44 45 46 47 fromkey_pegs
+    # 40 41 42 43 from code_pegs|| 40 41 42 43 fromkey_pegs
+    # 36 37 38 39 from code_pegs|| 36 37 38 39 fromkey_pegs
     # ...
-    # 0 1 2 3 from codepegs || 0 1 2 3 fromkeypegs
+    # 0 1 2 3 from code_pegs || 0 1 2 3 fromkey_pegs
     update_slots(@all_slots)
     draw_options(3) # show 3 options per line
   end
