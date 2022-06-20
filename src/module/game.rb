@@ -6,7 +6,9 @@ module Game
   def select_game_mode_from_array(arr)
     puts "Select game mode\n"
     arr.each_with_index { |game_mode, k| puts "[#{k + 1}]: #{game_mode}" }
-    get_option_from_array(Array.new(3) { |i| i + 1 })
+    option = get_option_from_array(Array.new(3) { |i| i + 1 })
+    puts "Selected #{arr[option - 1]}\n\n"
+    option
   end
 
   # Get a game mode option from the user
@@ -18,7 +20,6 @@ module Game
 
       puts 'Incorrect option'
     end
-    puts "Selected #{arr[option - 1]}\n\n"
     option
   end
 
