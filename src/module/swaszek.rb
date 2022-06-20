@@ -5,6 +5,7 @@ require 'pry-byebug'
 
 # load classes
 require './class/mastermind'
+require './module/math_extend'
 
 # A simple strategy which is good and computationally much faster
 # than Knuth's is the following (I have programmed both)
@@ -70,7 +71,8 @@ module Swaszek
       key = key.to_i
       create_key_peg(char, key, key_pegs_count)
     end
-    # p "candidate_code #{candidate_code}, @current_key_pegs_count #{@current_key_pegs_count}, key_pegs_count #{key_pegs_count}"
+    # p "candidate_code #{candidate_code},
+    # @current_key_pegs_count #{@current_key_pegs_count}, key_pegs_count #{key_pegs_count}"
     # p "@current_key_pegs_count == key_pegs_count #{@current_key_pegs_count == key_pegs_count}"
     @current_key_pegs_count[0] == key_pegs_count[0] && @current_key_pegs_count[1] == key_pegs_count[1]
   end
@@ -172,16 +174,19 @@ module Swaszek
     #   key = key.to_i
     #   create_key_peg(char, key, key_pegs_count)
     # end
-    # p "candidate_code #{candidate_code}, @current_key_pegs_count #{@current_key_pegs_count}, key_pegs_count #{key_pegs_count}, @current_key_pegs_count == key_pegs_count #{@current_key_pegs_count == key_pegs_count}"
+    # p "candidate_code #{candidate_code},
+    # @current_key_pegs_count #{@current_key_pegs_count},
+    # key_pegs_count #{key_pegs_count}, @current_key_pegs_count == key_pegs_count
+    #  #{@current_key_pegs_count == key_pegs_count}"
     # @current_key_pegs_count[0] == key_pegs_count[0] && @current_key_pegs_count[1] == key_pegs_count[1]
   end
 
   def show_pruned_stats(old_possible_candidates, new_possible_candidates)
-    pruned = old_possible_candidates - new_possible_candidates.length
-    partial = @all_permutations_per_turn.length - @possible_candidates.length
+    pruned = (old_possible_candidates - new_possible_candidates.length)
+    partial = (@all_permutations_per_turn.length - @possible_candidates.length)
     total = @all_permutations_per_turn.length
-    puts "Pruned #{pruned} keys"
-    puts "#{partial}/#{total} total (#{(partial.to_f / total.to_f * 100.to_f).round(2)}%)\n\n"
+    puts "Pruned #{pruned} keys (#{percent(pruned, total, 2)}%)"
+    puts "#{partial}/#{total} total (#{percent(partial, total, 2)}%)\n\n"
   end
 
   def fill_code_pegs

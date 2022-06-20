@@ -45,21 +45,22 @@ class Mastermind < Board
     slot_types: %i[code_pegs key_pegs]
   }
 
-  def play_game
+  def play_game(benchmark, max_tries)
+    puts "R = Red key peg\nW = White key peg\n0 = No key peg\n\n"
     # p @slots
     # p @options.length
     # puts "All possible permutations of valid codes: #{@all_permutations_per_turn.length}"
     # p @all_permutations_per_turn
     loop do
-      game_mode = select_game_mode_from_array(@game_modes)
-      puts "Selected #{@game_modes[game_mode-1]}\n\n"
+      game_mode = benchmark ? 3 : select_game_mode_from_array(@game_modes)
+      puts "Selected #{@game_modes[game_mode - 1]}\n\n"
       play_rounds(game_mode)
-      break unless replay_game?
+      break unless replay_game?(benchmark, @total_rounds, max_tries)
 
+      @total_rounds += 1
       reset_game_values
     end
-    puts 'Game ended'
-    puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
+    puts "Game ended\n\nFile: #{__FILE__}, Lines of Code (LOC): #{__LINE__}\n"
   end
 
   def valid_input?(input)
@@ -74,16 +75,18 @@ class Mastermind < Board
     end
     draw_board
     puts "Code Maker won! The code was #{@code_maker_code}"
+    @losses += 1
   end
 
   def game_end?
-    if @turn >= @max_turns
-      announce_code_maker_win
+    if winner?
+      @wins += 1
+      puts end_game_msg(@code_guess)
       return true
     end
 
-    if winner?
-      puts end_game_msg(@code_guess)
+    if @turn >= @max_turns
+      announce_code_maker_win
       return true
     end
 
@@ -122,6 +125,7 @@ class Mastermind < Board
       # puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
       # @code_guess = @all_permutations_per_turn.sample.join('')
       @code_guess = swaszek
+      puts "Inserted #{@code_guess}\n\n"
       update_board(@code_guess)
       break if game_end?
 
@@ -153,6 +157,7 @@ class Mastermind < Board
   def cpu_vs_cpu
     # puts "Making a code ... [#{@slots} slots, #{@options.length} colors]"
     @code_maker_code = @all_permutations_per_turn.sample.join('')
+    puts "Made code #{@code_maker_code}"
     loop_guesses
   end
 end

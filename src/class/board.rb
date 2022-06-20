@@ -18,7 +18,8 @@ class Board
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
   attr_reader :options, :max_turns, :title, :slots, :game_modes
   attr_accessor :board_data, :end_result, :game_board, :code_guess,
-                :turn, :code_maker_code, :all_permutations_per_turn, :possible_candidates, :current_key_pegs_count
+                :turn, :code_maker_code, :all_permutations_per_turn,
+                :possible_candidates, :current_key_pegs_count, :total_rounds, :wins, :losses
 
   # Fill default board data
   @@board_data = {
@@ -51,6 +52,9 @@ class Board
     # p "permutations of #{@slots} slots #{@options.length} options without repetition:
     # #{permutation_without_repetition(@options, @slots)}"
     # p @all_permutations_per_turn.length
+    @wins = 0 # as codebreaker
+    @losses = 0 # as codebreaker
+    @total_rounds = 1
     draw_board(@title)
   end
 
@@ -128,16 +132,22 @@ class Board
   end
 
   def reset_game_values
-    # puts "New Game!\n"
+    puts "Total rounds: #{@total_rounds}, losses: #{@losses}, wins: #{@wins}, percentage won: #{percent(@wins,
+                                                                                                        @total_rounds, 4)}\n\n"
+    puts "New Game!\n\n"
     @game_board = { code_pegs: Array.new(4 * @max_turns, 0), key_pegs: Array.new(4 * @max_turns, 0) }
     set_default_game_values
     @game_board = enter_board_data
+
     draw_board
   end
 
   def set_default_game_values
     fill_default_board
     @game_board = enter_board_data
+    # @wins = 0
+    # @losses = 0
+    # @total_rounds = 0
     # @code_guess = nil
     # @turn = 0
     # @code_maker_code = nil

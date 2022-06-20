@@ -112,9 +112,15 @@ module MathExtend
     number * factorial(number - 1)
   end
 
-  def permutation_without_repetition(n, r)
-    n = n.length if n.instance_of?(Array) || n.instance_of?(Hash)
-    factorial(n) / factorial(n - r)
+  def percent(number, total, rounding)
+    number = number.to_f
+    total = total.to_f
+    (number / total * 100.0).round(rounding)
+  end
+
+  def permutation_without_repetition(options, slots)
+    options = options.length if options.instance_of?(Array) || options.instance_of?(Hash)
+    factorial(options) / factorial(options - slots)
   end
 
   def from_decimal(res, base, input_num)
