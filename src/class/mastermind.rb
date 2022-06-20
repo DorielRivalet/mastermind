@@ -25,12 +25,17 @@ require './class/board'
 require './module/swaszek'
 require './module/doriel'
 
+# load config
+require './config/config'
+
 # Mastermind board game inherits from Board class.
-# Board has MathExtend and Game modules included
+# Board has BoardUi, MathExtend and Game modules included
 class Mastermind < Board
   # include Doriel
   include Swaszek
+  include Config
 
+  # TODO: add to config file instead
   @@board_data = {
     title: "
 
@@ -41,23 +46,23 @@ class Mastermind < Board
     slots: 4,
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
+    max_rounds: 1000,
     game_modes: ['Code Cracker', 'Code Maker', 'CPU vs CPU'],
     slot_types: %i[code_pegs key_pegs]
   }
 
-  def play_game(benchmark, max_tries)
-    puts "R = Red key peg\nW = White key peg\n0 = No key peg\n\n"
+  def play_game
     # p @slots
     # p @options.length
     # puts "All possible permutations of valid codes: #{@all_permutations_per_turn.length}"
     # p @all_permutations_per_turn
     loop do
       game_mode = benchmark ? 3 : select_game_mode_from_array(@game_modes)
-      puts "Selected #{@game_modes[game_mode - 1]}\n\n"
       play_rounds(game_mode)
-      break unless replay_game?(benchmark, @total_rounds, max_tries)
-
+      break unless replay_game?(benchmark, @total_rounds, @max_rounds)
       @total_rounds += 1
+      @round_ends.push(@turn)
+      show_stats
       reset_game_values
     end
     puts "Game ended\n\nFile: #{__FILE__}, Lines of Code (LOC): #{__LINE__}\n"

@@ -123,6 +123,10 @@ module MathExtend
     factorial(options) / factorial(options - slots)
   end
 
+  def average_from_array(arr)
+    (arr.reduce{|accumulator, round_end| accumulator + round_end}.to_f / arr.size).round(4)
+  end
+
   def from_decimal(res, base, input_num)
     while input_num.positive?
       res += re_val(input_num % base)

@@ -18,7 +18,7 @@ class Board
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
   attr_reader :options, :max_turns, :title, :slots, :game_modes
   attr_accessor :board_data, :end_result, :game_board, :code_guess,
-                :turn, :code_maker_code, :all_permutations_per_turn,
+                :turn, :code_maker_code, :all_permutations_per_turn, :round_ends, :max_rounds,
                 :possible_candidates, :current_key_pegs_count, :total_rounds, :wins, :losses
 
   # Fill default board data
@@ -28,6 +28,7 @@ class Board
     options: %w[1 2 3], # options per slot
     max_turns: 12, # turns until draw or loss
     game_modes: %w[1 2 3],
+    max_rounds: 1000,
     slot_types: %i[a b] # types = [:code_pegs, :key_pegs]
   }
 
@@ -55,7 +56,9 @@ class Board
     @wins = 0 # as codebreaker
     @losses = 0 # as codebreaker
     @total_rounds = 1
+    @round_ends = []
     draw_board(@title)
+    puts "R = Red key peg\nW = White key peg\n0 = No key peg\n\n"
   end
 
   def fill_default_board_with_static_data
@@ -83,6 +86,7 @@ class Board
     @slot_types = @@board_data[:slot_types]
     @max_turns = @@board_data[:max_turns]
     @game_modes = @@board_data[:game_modes]
+    @max_rounds = @@board_data[:max_rounds]
   end
 
   # input data into game board according to the slot_types, slots and max_turns
@@ -132,13 +136,9 @@ class Board
   end
 
   def reset_game_values
-    puts "Total rounds: #{@total_rounds}, losses: #{@losses}, wins: #{@wins}, percentage won: #{percent(@wins,
-                                                                                                        @total_rounds, 4)}\n\n"
     puts "New Game!\n\n"
     @game_board = { code_pegs: Array.new(4 * @max_turns, 0), key_pegs: Array.new(4 * @max_turns, 0) }
     set_default_game_values
-    @game_board = enter_board_data
-
     draw_board
   end
 

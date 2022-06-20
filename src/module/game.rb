@@ -18,12 +18,14 @@ module Game
 
       puts 'Incorrect option'
     end
+    puts "Selected #{arr[option - 1]}\n\n"
     option
   end
 
   # prompt user if they want to restart the game
   def replay_game?(benchmark, tries, max_tries)
     puts "Restart game? [y/n]\n"
+    # p benchmark, tries, max_tries
     if benchmark
       return false if tries == max_tries
 
