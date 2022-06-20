@@ -37,9 +37,8 @@ module BoardUi
 
   def display_stats
     # p @round_ends
-    puts "Total rounds: #{@total_rounds - 1}\nLosses: #{@losses}\nWins: #{@wins}"
-    puts "Percentage Won: #{percent(@wins, @total_rounds - 1,
-                                    4)}\nAverage turns to win: #{average_from_array(@round_ends)}"
+    puts "Total rounds: #{@total_rounds}\nLosses: #{@losses}\nWins: #{@wins}"
+    puts "Winrate: #{percent(@wins, @total_rounds, 4)}%\nAverage turns: #{average_from_array(@round_ends)}\n\n"
   end
 
   # Render the code and key pegs slots

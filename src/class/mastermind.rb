@@ -38,15 +38,13 @@ class Mastermind < Board
   # TODO: add to config file instead
   @@board_data = {
     title: "
-
     | \/| _  _|_ _ _ _ . _  _|
     |  |(_|_)|_(-| ||||| )(_|
-
        ",
     slots: 4,
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
-    max_rounds: 1000,
+    max_rounds: 1000, # for benchmarking
     game_modes: ['Code Cracker', 'Code Maker', 'CPU vs CPU'],
     slot_types: %i[code_pegs key_pegs]
   }
@@ -59,20 +57,18 @@ class Mastermind < Board
     loop do
       game_mode = benchmark ? 3 : select_game_mode_from_array(@game_modes)
       play_rounds(game_mode)
+      @round_ends.push(@turn)
+      display_stats
       break unless replay_game?(benchmark, @total_rounds, @max_rounds)
 
       @total_rounds += 1
-      @round_ends.push(@turn)
-      display_stats
       reset_game_values
     end
     puts "Game ended\n\nFile: #{__FILE__}, Lines of Code (LOC): #{__LINE__}\n"
   end
 
   def valid_input?(input)
-    return false if input.nil?
-
-    input.length == @slots
+    input.nil? ? false : input.length == @slots
   end
 
   def announce_code_maker_win
@@ -81,61 +77,65 @@ class Mastermind < Board
     end
     draw_board
     puts "Code Maker won! The code was #{@code_maker_code}"
-    @losses += 1
   end
 
-  def game_end?
-    if winner?
-      @wins += 1
-      puts end_game_msg(@code_guess)
-      return true
-    end
+  def game_end?(game_mode)
+    puts end_game_msg(@code_guess) if guessed_code_correct?
 
-    if @turn >= @max_turns
-      announce_code_maker_win
-      return true
+    announce_code_maker_win if @turn >= @max_turns && !guessed_code_correct?
+
+    if guessed_code_correct? || @turn >= @max_turns
+      # p add_points(game_mode, guessed_code_correct?, @turn >= @max_turns, @wins, @losses)
+      return add_points(game_mode, guessed_code_correct?, @turn >= @max_turns)
     end
 
     false
   end
 
-  def valid_code?(code)
-    return false if code.nil?
+  def add_points(game_mode, condition1, condition2)
+    #  p condition1, condition2
+    if [1, 3].include?(game_mode)
+      # p 'aa'
+      condition1 ? @wins += 1 : @losses += 1
+    end
 
-    @all_permutations_per_turn.include?(code.chars)
+    if game_mode == 2
+      # p 'bb'
+      condition2 ? @wins += 1 : @losses += 1
+    end
+    # p 'cc'
+    'Points added!' # truthy
   end
 
-  def increment_turn
-    # @code_guess = nil
-    @turn += 1
+  def valid_code?(code)
+    code.nil? ? false : @all_permutations_per_turn.include?(code.chars)
   end
 
   def check_code(game_mode)
-    case game_mode
-    when 1 # code_cracker
+    if game_mode == 1
       until valid_input?(@code_guess)
         @code_guess = gets.chomp.to_s
-        # puts 'Wrong input' unless valid_input?(@code_guess)
+        puts 'Wrong input' unless valid_input?(@code_guess)
       end
-    when 2 # code_maker
+    elsif game_mode == 2
       until valid_code?(@code_maker_code)
         @code_maker_code = gets.chomp.to_s
-        # puts 'Invalid code' unless valid_code?(@code_maker_code)
+        puts 'Invalid code' unless valid_code?(@code_maker_code)
       end
     end
   end
 
   # loop automatic guesses
-  def loop_guesses
+  def loop_guesses(game_mode)
     loop do
       # puts "Inserting a code ... [#{@slots} slots, #{@options.length} colors]"
       # @code_guess = @all_permutations_per_turn.sample.join('')
       @code_guess = swaszek
-      puts "Inserted #{@code_guess}\n\n"
+      # puts "Inserted #{@code_guess}\n\n"
       update_board(@code_guess)
-      break if game_end?
+      break if game_end?(game_mode)
 
-      increment_turn
+      @turn += 1
     end
   end
 
@@ -148,22 +148,22 @@ class Mastermind < Board
       update_board(@code_guess)
       # attach debugger
       # binding.pry
-      break if game_end?
+      break if game_end?(game_mode)
 
-      increment_turn
+      @turn += 1
     end
   end
 
   def play_as_code_maker(game_mode)
     puts "Make a code [#{@slots} slots, #{@options.length} colors]"
     check_code(game_mode)
-    loop_guesses
+    loop_guesses(game_mode)
   end
 
-  def cpu_vs_cpu
+  def cpu_vs_cpu(game_mode)
     # puts "Making a code ... [#{@slots} slots, #{@options.length} colors]"
     @code_maker_code = @all_permutations_per_turn.sample.join('')
-    puts "Made code #{@code_maker_code}"
-    loop_guesses
+    # puts "Made code #{@code_maker_code}"
+    loop_guesses(game_mode)
   end
 end

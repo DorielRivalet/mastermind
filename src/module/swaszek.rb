@@ -199,7 +199,7 @@ module Swaszek
     # p "candidate_code #{candidate_code},
     # @current_key_pegs_count #{@current_key_pegs_count}, key_pegs_count #{key_pegs_count}"
     # p "@current_key_pegs_count == key_pegs_count #{@current_key_pegs_count == key_pegs_count}"
-    @current_key_pegs_count[0] >= key_pegs_count[0] && @current_key_pegs_count[1] <= key_pegs_count[1]
+    @current_key_pegs_count[0] >= key_pegs_count[0] # && @current_key_pegs_count[1] == key_pegs_count[1]
   end
 
   def fill_code_pegs

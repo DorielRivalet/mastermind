@@ -17,8 +17,8 @@ def main
   puts "Total rounds: #{mastermind.total_rounds}"
   puts "Losses: #{mastermind.losses}"
   puts "Wins: #{mastermind.wins}"
-  puts "Percentage Won: #{mastermind.percent(mastermind.wins, mastermind.total_rounds, 4)}"
-  puts "Average turns to win: #{mastermind.average_from_array(mastermind.round_ends)}"
+  puts "Winrate: #{mastermind.percent(mastermind.wins, mastermind.total_rounds, 4)}%"
+  puts "Average turns: #{mastermind.average_from_array(mastermind.round_ends)}"
   # Show program metadata at game end
   puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
 end

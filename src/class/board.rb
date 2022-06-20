@@ -132,7 +132,7 @@ class Board
   def play_rounds(game_mode = 3)
     play_as_code_cracker(game_mode) if game_mode == 1
     play_as_code_maker(game_mode) if game_mode == 2
-    cpu_vs_cpu if game_mode == 3
+    cpu_vs_cpu(game_mode) if game_mode == 3
   end
 
   def reset_game_values
@@ -153,7 +153,7 @@ class Board
     # @code_maker_code = nil
   end
 
-  def winner?
+  def guessed_code_correct?
     @code_guess == @code_maker_code
   end
 end

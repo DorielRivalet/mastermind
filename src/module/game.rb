@@ -38,7 +38,7 @@ module Game
 
   # show the winner of the round
   def end_game_msg(code_guess)
-    "Correct! The code is #{code_guess}"
+    "Correct! The code is #{code_guess}\n\n"
   end
 
   # print game title with ASCII art
