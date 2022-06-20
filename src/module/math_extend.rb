@@ -102,6 +102,21 @@ module MathExtend
   #   res = res[::-1];
   #   return res;
 
+  # Written by Doriel Rivalet
+  def factorial(number)
+    # return 1 if number.zero?
+    # return nil if  number < 1
+    return 1 if number <= 1
+    return number if number == 1
+
+    number * factorial(number - 1)
+  end
+
+  def permutation_without_repetition(n, r)
+    n = n.length if n.instance_of?(Array) || n.instance_of?(Hash)
+    factorial(n) / factorial(n - r)
+  end
+
   def from_decimal(res, base, input_num)
     while input_num.positive?
       res += re_val(input_num % base)

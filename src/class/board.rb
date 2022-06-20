@@ -18,7 +18,7 @@ class Board
   # Instance.attribute reader/accessor, Instance.attribute = newVal writing/accessor
   attr_reader :options, :max_turns, :title, :slots, :game_modes
   attr_accessor :board_data, :end_result, :game_board, :code_guess,
-                :turn, :code_maker_code, :all_permutations_per_turn, :possible_candidates
+                :turn, :code_maker_code, :all_permutations_per_turn, :possible_candidates, :current_key_pegs_count
 
   # Fill default board data
   @@board_data = {
@@ -27,54 +27,62 @@ class Board
     options: %w[1 2 3], # options per slot
     max_turns: 12, # turns until draw or loss
     game_modes: %w[1 2 3],
-    slot_types: %i[a b], # types = [:code_pegs, :key_pegs]
-    end_result: %w[? ? ? ?],
-    turn: 1,
-    code_guess: '123456',
-    all_slots: 12 * 4, # slots times max turns
-    current_slot: 0,
-    code_maker_code: nil
+    slot_types: %i[a b] # types = [:code_pegs, :key_pegs]
   }
 
   # [Board.new] Create default values and draw the initial state
   def initialize
     puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
     # p @all_slots
-    # @all_secret_codes = fill_array_4(@code_pegs.length) # possibilities: 6 to the 4
+    # @all_secret_codes = fill_array_4(@code_pegs.length) # possibilities: 6 to the 4 but this is counting repetition
+    # for no repetition the formula is: n! / (n-r)! where n are options and r are slots
     # https://www.mathsisfun.com/combinatorics/combinations-permutations.html
     # all possible codebreaker guesses per turn
-    fill_default_board
-    @code_guess = @@board_data[:code_guess]
-    @code_maker_code = @@board_data[:code_maker_code]
-
+    fill_default_board_from_board_data
+    fill_default_board_with_static_data
+    set_default_game_values
     # Create the list 1111,...,6666 of all candidate secret codes
-    @all_permutations_per_turn = @options.permutation(@slots).to_a
-    @possible_candidates = @options.permutation(@slots).to_a
     # @key_pegs = %w[B W]
     # https://stackoverflow.com/questions/4410076/how-can-i-initialize-an-array-inside-a-hash-in-ruby
     # @code_guess = nil
     # @turn = 0
     # @code_maker_code = nil
-    @game_board = enter_board_data
+    # @game_board = enter_board_data
+    # p "permutations of #{@slots} slots #{@options.length} options without repetition:
+    # #{permutation_without_repetition(@options, @slots)}"
+    # p @all_permutations_per_turn.length
     draw_board(@title)
   end
 
+  def fill_default_board_with_static_data
+    @all_slots = @slots * @max_turns
+    @all_permutations_per_turn = @options.permutation(@slots).to_a
+  end
+
   def fill_default_board
+    @numbers_to_remove = []
+    @numbers_to_include = []
+    @possible_code = Array.new(@slots, @options)
+    @current_slot = 0
+    @turn = 1
+    @code_guess = ''
+    @code_maker_code = nil
+    @possible_candidates = @options.permutation(@slots).to_a
+    @current_key_pegs_count = [0, 0]
+    @end_result = %w[? ? ? ?]
+  end
+
+  def fill_default_board_from_board_data
     @title = @@board_data[:title]
     @slots = @@board_data[:slots]
     @options = @@board_data[:options]
     @slot_types = @@board_data[:slot_types]
     @max_turns = @@board_data[:max_turns]
     @game_modes = @@board_data[:game_modes]
-    @end_result = @@board_data[:end_result]
-    @turn = @@board_data[:turn]
-    @all_slots = @@board_data[:all_slots]
-    @current_slot = @@board_data[:current_slot]
   end
 
   # input data into game board according to the slot_types, slots and max_turns
-  def enter_board_data
-    game_board = {}
+  def enter_board_data(game_board = {})
     @slot_types.each do |type|
       game_board[type] = Array.new(@slots * @max_turns, 0)
     end
@@ -82,7 +90,6 @@ class Board
   end
 
   def insert_code_guess(code_guess)
-    code_guess = '1234' if code_guess.nil?
     code_guess.chars.each_with_index do |char, k|
       k = k.to_i
       @game_board[:code_pegs][k + @current_slot] = char
@@ -90,9 +97,9 @@ class Board
     end
   end
 
+  # code_guess = '1234' if code_guess.nil?
   def insert_key_pegs(code_guess)
     # p @code_maker_code
-    code_guess = '1234' if code_guess.nil?
     code_guess.chars.each_with_index do |char, k|
       k = k.to_i
       if @code_maker_code.chars[k] == char
@@ -107,21 +114,21 @@ class Board
     end
   end
 
-  def update_board(code_guess)
+  def update_board(code_guess = '1234')
     insert_code_guess(code_guess)
     insert_key_pegs(code_guess)
     @current_slot += 4
     draw_board
   end
 
-  def play_rounds(game_mode)
+  def play_rounds(game_mode = 3)
     play_as_code_cracker(game_mode) if game_mode == 1
     play_as_code_maker(game_mode) if game_mode == 2
     cpu_vs_cpu if game_mode == 3
   end
 
   def reset_game_values
-    puts "New Game!\n"
+    # puts "New Game!\n"
     @game_board = { code_pegs: Array.new(4 * @max_turns, 0), key_pegs: Array.new(4 * @max_turns, 0) }
     set_default_game_values
     @game_board = enter_board_data
@@ -129,13 +136,11 @@ class Board
   end
 
   def set_default_game_values
-    @end_result = %w[? ? ? ?]
-    @code_guess = nil
-    @turn = @@board_data[:turn]
-    @code_maker_code = nil
-    @current_slot = @@board_data[:current_slot]
-    @code_maker_code = @@board_data[:code_maker_code]
-    @possible_candidates = @options.permutation(@slots).to_a
+    fill_default_board
+    @game_board = enter_board_data
+    # @code_guess = nil
+    # @turn = 0
+    # @code_maker_code = nil
   end
 
   def winner?

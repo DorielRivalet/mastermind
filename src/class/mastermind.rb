@@ -21,13 +21,16 @@
 # load superclass
 require './class/board'
 
-# load swaszek algorithm
+# load solver algorithms
 require './module/swaszek'
+require './module/doriel'
 
 # Mastermind board game inherits from Board class.
 # Board has MathExtend and Game modules included
 class Mastermind < Board
+  # include Doriel
   include Swaszek
+
   @@board_data = {
     title: "
 
@@ -39,17 +42,17 @@ class Mastermind < Board
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
     game_modes: ['Code Cracker', 'Code Maker', 'CPU vs CPU'],
-    slot_types: %i[code_pegs key_pegs],
-    end_result: %w[? ? ? ?],
-    turn: 1,
-    code_guess: '',
-    all_slots: 12 * 4,
-    current_slot: 0
+    slot_types: %i[code_pegs key_pegs]
   }
 
   def play_game
+    # p @slots
+    # p @options.length
+    # puts "All possible permutations of valid codes: #{@all_permutations_per_turn.length}"
+    # p @all_permutations_per_turn
     loop do
       game_mode = select_game_mode_from_array(@game_modes)
+      puts "Selected #{@game_modes[game_mode-1]}\n\n"
       play_rounds(game_mode)
       break unless replay_game?
 
@@ -94,7 +97,7 @@ class Mastermind < Board
   end
 
   def increment_turn
-    @code_guess = nil
+    # @code_guess = nil
     @turn += 1
   end
 
@@ -129,6 +132,7 @@ class Mastermind < Board
   def play_as_code_cracker(game_mode)
     @code_maker_code = @all_permutations_per_turn.sample.join('')
     loop do
+      @code_guess = nil
       puts "Insert a code [#{@slots} slots, #{@options.length} colors]"
       check_code(game_mode)
       update_board(@code_guess)

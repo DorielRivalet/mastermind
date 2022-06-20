@@ -6,19 +6,19 @@ require 'pry-byebug'
 # load classes
 require './class/mastermind'
 
-# A simple strategy which is good and computationally much faster
-# than Knuth's is the following (I have programmed both)
 # Create the list 1111,...,6666 of all candidate secret codes
 # Start with 1122.
-# Repeat the following 2 steps:
+# Repeat the following:
 # 1) After you got the answer (number of red and number of white pegs) eliminate from the list of candidates
-# all codes that would not have produced the same answer IF they were the secret code.
-# 2) Pick the first element in the list and use it as new guess.
-# This averages no more than 5 guesses.
-# This is the Swaszek (1999-2000) strategy that was mentioned in another answer.
-module Swaszek
+# all codes that would not have produced the same answer or better IF they were the secret code.
+# Check for zeroes and add those numbers to an array,if the array length isn't 2.
+# Check for red key pegs and add those to the array above,
+# and then fill partially a code guess in their respective positions.
+# Replace the white pegs with the remaining candidates.
+# Pick a random element in the list and use it as new guess.
+module Doriel
   # prune keys according to key_pegs
-  def swaszek
+  def doriel
     # Create the list 1111,...,6666 of all candidate secret codes
     # @all_permutations_per_turn = @options.permutation(@slots).to_a
 
@@ -70,8 +70,8 @@ module Swaszek
       key = key.to_i
       create_key_peg(char, key, key_pegs_count)
     end
-    # p "candidate_code #{candidate_code}, @current_key_pegs_count #{@current_key_pegs_count}, key_pegs_count #{key_pegs_count}"
-    # p "@current_key_pegs_count == key_pegs_count #{@current_key_pegs_count == key_pegs_count}"
+    p "candidate_code #{candidate_code}, @current_key_pegs_count #{@current_key_pegs_count}"
+    p "key_pegs_count #{key_pegs_count}, @current_key_pegs_count == key_pegs_count #{@current_key_pegs_count == key_pegs_count}"
     @current_key_pegs_count[0] == key_pegs_count[0] && @current_key_pegs_count[1] == key_pegs_count[1]
   end
 
@@ -84,6 +84,7 @@ module Swaszek
       key_pegs_count[1] += 1
     end
   end
+
   # code_maker 1436
   # guess 2361
   # keys 0www
@@ -94,23 +95,22 @@ module Swaszek
   # possible_code = [%w[1 3 4 5 6], %w[1 3 4 5 6], %w[1 3 4 5 6], %w[1 3 4 5 6]]
   # numbers_to_remove.push(2)
   # next if number_to_remove.includes?(i)
-  # def check_zeroes
-  #   numbers_to_remove = []
-  #   # previous code guess
-  #   @code_guess.chars.each_with_index do |number, k|
-  #     next if numbers_to_remove.includes?(number)
+  def check_zeroes
+    # previous code guess
+    p @code_guess
+    @code_guess.chars.each_with_index do |number, k|
+      next if @numbers_to_remove.includes?(number)
 
-  #     numbers_to_remove.push(number) if @game_board[:key_pegs][k + @current_slot] == '0'
-  #   end
-  #   # while current_key_pegs.include?("0")
-  #   #   if @game_board[:key_pegs][k+@current_slot] == "0"
-  #   #     possible_code[k] = possible_code[k] - v
-  #   #     p possible_code
-  #   #     next
-  #   #   end
-  #   # end
-  #   numbers_to_remove
-  # end
+      numbers_to_remove.push(number) if @game_board[:key_pegs][k + @current_slot] == '0'
+    end
+    # while current_key_pegs.include?("0")
+    #   if @game_board[:key_pegs][k+@current_slot] == "0"
+    #     possible_code[k] = possible_code[k] - v
+    #     p possible_code
+    #     next
+    #   end
+    # end
+  end
 
   # # first insert the numbers that got red key pegs in their slots
   # # then do possible_candidates = check numbers to remove
@@ -154,17 +154,17 @@ module Swaszek
   # set number of red and white key pegs
   def set_current_key_pegs_count
     key_pegs_count = [0, 0]
-    # p @current_slot
     key_pegs = @game_board[:key_pegs][@current_slot - 4].to_s + @game_board[:key_pegs][@current_slot - 3].to_s + @game_board[:key_pegs][@current_slot - 2].to_s + @game_board[:key_pegs][@current_slot - 1].to_s
-    # p key_pegs
-    key_pegs.split('').each_with_index do |key_peg, _|
+    key_pegs.split('').each_with_index do |key_peg, index|
       next if key_peg == '0'
 
-      key_pegs_count[0] += 1 if key_peg == 'R'
-
-      key_pegs_count[1] += 1 if key_peg == 'W'
+      if @code_maker_code.chars.include?(key_peg)
+        key_pegs_count[1] += 1
+      elsif @code_maker_code.chars[index] == key_peg
+        key_pegs_count[0] += 1
+      end
     end
-    # p "@current_slot #{@current_slot} key_pegs_count from row #{@turn - 1}: #{key_pegs_count} turn: #{@turn}"
+    p "@current_slot #{@current_slot} key_pegs_count from row #{@turn - 1}: #{key_pegs_count} turn: #{@turn}"
     key_pegs_count
     # # reds and whites
     # key_pegs_count = [0, 0]
@@ -176,32 +176,30 @@ module Swaszek
     # @current_key_pegs_count[0] == key_pegs_count[0] && @current_key_pegs_count[1] == key_pegs_count[1]
   end
 
-  def show_pruned_stats(old_possible_candidates, new_possible_candidates)
-    pruned = old_possible_candidates - new_possible_candidates.length
-    partial = @all_permutations_per_turn.length - @possible_candidates.length
-    total = @all_permutations_per_turn.length
-    puts "Pruned #{pruned} keys"
-    puts "#{partial}/#{total} total (#{(partial.to_f / total.to_f * 100.to_f).round(2)}%)\n\n"
-  end
-
+  # Repeat the following:
+  # 1) After you got the answer (number of red and number of white pegs) eliminate from the list of candidates
+  # all codes that would not have produced the same answer or better IF they were the secret code.
+  # Check for zeroes and add those numbers to an array,if the array length isn't 2.
+  # Check for red key pegs and add those to the array above,
+  # and then fill partially a code guess in their respective positions.
+  # Replace the white pegs with the remaining candidates.
+  # Pick a random element in the list and use it as new guess.
   def fill_code_pegs
-    # possible_code = Array.new(@slots, @options)
-    # p possible_code
+    p @possible_code
     # binding.pry
-    @current_key_pegs_count = set_current_key_pegs_count
+    # @current_key_pegs_count = set_current_key_pegs_count
     # p @current_key_pegs_count
-    # possible_candidates = prune_keys(check_zeroes, check_blacks, check_whites)
-
-    # 1) After you got the answer (number of red and number of white pegs) eliminate from the list of candidates
-    # all codes that would not have produced the same answer IF they were the secret code.
-    old_possible_candidates = @possible_candidates.length
-    new_possible_candidates = @possible_candidates.reject { |v| produce_same_answer?(v) }
-    @possible_candidates = new_possible_candidates
-    # possible_candidates = possible_candidates.filter
-    show_pruned_stats(old_possible_candidates, new_possible_candidates)
-    # Pick the first element in the list and use it as new guess.
-    puts 'empty array' if @possible_candidates.empty?
-    @possible_candidates[0].join('') unless @possible_candidates.empty?
+    # # possible_candidates = prune_keys(check_zeroes, check_blacks, check_whites)
+    check_zeroes
+    # # 1) After you got the answer (number of red and number of white pegs) eliminate from the list of candidates
+    # # all codes that would not have produced the same answer IF they were the secret code.
+    # new_possible_candidates = @possible_candidates.select { |v| !produce_same_answer?(v) }
+    # @possible_candidates = new_possible_candidates
+    # # possible_candidates = possible_candidates.filter
+    # p "@possible_candidates size #{@possible_candidates.length} all_candidates #{@all_permutations_per_turn.length}"
+    # # Pick the first element in the list and use it as new guess.
+    # puts 'empty array' if @possible_candidates.empty?
+    # @possible_candidates[0].join('') unless @possible_candidates.empty?
     # '1233'
     # p "turn: #{@turn}, candidates: #{candidates}, possible_code #{possible_code}"
   end
