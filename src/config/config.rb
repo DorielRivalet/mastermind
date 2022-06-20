@@ -2,7 +2,6 @@
 
 # Main configuration
 module Config
-
   # Toggle benchmark
   def benchmark
     false
@@ -12,5 +11,4 @@ module Config
   # def max_tries
   #   10
   # end
-
 end
