@@ -189,6 +189,19 @@ module Swaszek
     puts "#{partial}/#{total} total (#{percent(partial, total, 2)}%)\n\n"
   end
 
+  def produce_worse_answer?(candidate_code)
+    # reds and whites
+    key_pegs_count = [0, 0]
+    candidate_code.each_with_index do |char, key|
+      key = key.to_i
+      create_key_peg(char, key, key_pegs_count)
+    end
+    # p "candidate_code #{candidate_code},
+    # @current_key_pegs_count #{@current_key_pegs_count}, key_pegs_count #{key_pegs_count}"
+    # p "@current_key_pegs_count == key_pegs_count #{@current_key_pegs_count == key_pegs_count}"
+    @current_key_pegs_count[0] >= key_pegs_count[0] && @current_key_pegs_count[1] <= key_pegs_count[1]
+  end
+
   def fill_code_pegs
     # possible_code = Array.new(@slots, @options)
     # p possible_code
@@ -200,7 +213,7 @@ module Swaszek
     # 1) After you got the answer (number of red and number of white pegs) eliminate from the list of candidates
     # all codes that would not have produced the same answer IF they were the secret code.
     old_possible_candidates = @possible_candidates.length
-    new_possible_candidates = @possible_candidates.reject { |v| produce_same_answer?(v) }
+    new_possible_candidates = @possible_candidates.reject { |v| produce_worse_answer?(v) }
     @possible_candidates = new_possible_candidates
     # possible_candidates = possible_candidates.filter
     show_pruned_stats(old_possible_candidates, new_possible_candidates)

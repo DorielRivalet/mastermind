@@ -60,9 +60,10 @@ class Mastermind < Board
       game_mode = benchmark ? 3 : select_game_mode_from_array(@game_modes)
       play_rounds(game_mode)
       break unless replay_game?(benchmark, @total_rounds, @max_rounds)
+
       @total_rounds += 1
       @round_ends.push(@turn)
-      show_stats
+      display_stats
       reset_game_values
     end
     puts "Game ended\n\nFile: #{__FILE__}, Lines of Code (LOC): #{__LINE__}\n"

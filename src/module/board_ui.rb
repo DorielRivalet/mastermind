@@ -35,7 +35,7 @@ module BoardUi
     draw_slots(i, row)
   end
 
-  def show_stats
+  def display_stats
     # p @round_ends
     puts "Total rounds: #{@total_rounds-1}\nLosses: #{@losses}\nWins: #{@wins}"
     puts "Percentage Won: #{percent(@wins, @total_rounds-1, 4)}\nAverage turns to win: #{average_from_array(@round_ends)}"

@@ -8,7 +8,6 @@ require './class/mastermind'
 
 # Define main program
 def main
-
   # Create instance
   mastermind = Mastermind.new
 
