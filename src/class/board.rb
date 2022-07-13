@@ -115,6 +115,7 @@ class Board
   end
 
   def play_rounds(game_mode = 3)
+    game_mode = 3 if game_mode == 4
     play_as_code_cracker(game_mode) if game_mode == 1
     play_as_code_maker(game_mode) if game_mode == 2
     cpu_vs_cpu(game_mode) if game_mode == 3

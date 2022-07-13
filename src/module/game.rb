@@ -6,7 +6,7 @@ module Game
   def select_game_mode_from_array(arr)
     puts "Select game mode\n"
     arr.each_with_index { |game_mode, k| puts "[#{k + 1}]: #{game_mode}" }
-    option = get_option_from_array(Array.new(3) { |i| i + 1 })
+    option = get_option_from_array(Array.new(arr.length) { |i| i + 1 })
     puts "Selected #{arr[option - 1]}\n\n"
     option
   end
@@ -26,7 +26,6 @@ module Game
   # prompt user if they want to restart the game
   def replay_game?(benchmark, tries, max_tries)
     puts "Restart game? [y/n]\n"
-    # p benchmark, tries, max_tries
     if benchmark
       return false if tries == max_tries
 

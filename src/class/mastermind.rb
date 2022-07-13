@@ -24,15 +24,11 @@ require './class/board'
 # load solver algorithms
 require './module/swaszek'
 
-# load config
-require './config/config'
-
 # Mastermind board game inherits from Board class.
 # Board has BoardUi, MathExtend and Game modules included
 class Mastermind < Board
   # include Doriel
   include Swaszek
-  include Config
 
   # TODO: add to config file instead
   @@board_data = {
@@ -44,13 +40,15 @@ class Mastermind < Board
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
     max_rounds: 10_000, # for benchmarking
-    game_modes: ['Code Cracker', 'Code Maker', 'CPU vs CPU'],
+    game_modes: ['Code Cracker', 'Code Maker', 'CPU vs CPU', 'Benchmark'],
     slot_types: %i[code_pegs key_pegs]
   }
 
   def play_game
+    benchmark = false
     loop do
       game_mode = benchmark ? 3 : select_game_mode_from_array(@game_modes)
+      benchmark = true if game_mode == 4
       play_rounds(game_mode)
       @round_ends.push(@turn)
       display_stats
@@ -66,20 +64,18 @@ class Mastermind < Board
     input.nil? ? false : input.length == @slots
   end
 
-  def announce_code_maker_win
+  def set_end_result
     @code_maker_code.chars.each_with_index do |char, k|
       @end_result[k] = char
     end
     draw_board
-    puts "Code Maker won! The code was #{@code_maker_code}"
   end
 
   def game_end?(game_mode)
-    puts end_game_msg(@code_guess) if guessed_code_correct?
-
-    announce_code_maker_win if @turn >= @max_turns && !guessed_code_correct?
-
     if guessed_code_correct? || @turn >= @max_turns
+      set_end_result
+      puts end_game_msg(@code_guess) if guessed_code_correct?
+      puts "Code Maker won! The code was #{@code_maker_code}" if @turn >= @max_turns && !guessed_code_correct?
       return add_points(game_mode, guessed_code_correct?, @turn >= @max_turns)
     end
 
