@@ -43,6 +43,15 @@ module Game
 
   # print game title with ASCII art
   def show_game_title(title)
-    puts title
+    puts "#{title}\n"
+    puts "Designer: Mordecai Meirowitz"
+    puts "Years active: 1970 to present"
+    puts "Genres: Board game, Paper & pencil game [root]"
+    puts "Players: 2"
+    puts "Setup time: < 5 minutes"
+    puts "Playing time: 10–30 minutes"
+    puts "Random chance: Negligible"
+    puts "Age range: 8 and up"
+    puts "Description: Solve your opponent's code in fewer turns than it takes your opponent to solve your code.\n\n"
   end
 end

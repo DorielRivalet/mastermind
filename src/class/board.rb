@@ -47,7 +47,7 @@ class Board
     @total_rounds = 1
     @round_ends = []
     title ? show_game_title(title) : draw_board
-    puts "R = Red key peg\nW = White key peg\n0 = No key peg\n\n" if title
+    puts "R = Red key peg (correct color and slot)\nW = White key peg (correct color)\n0 = No key peg \n\n" if title
   end
 
   def fill_default_board_with_static_data

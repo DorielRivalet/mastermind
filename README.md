@@ -1,5 +1,6 @@
 # mastermind
 
+![preview2](res/img/preview2.png)
 ![preview](./res/img/preview.png)
 
 ## Prerequisites
