@@ -25,7 +25,7 @@ module Game
 
   # prompt user if they want to restart the game
   def replay_game?(benchmark, tries, max_tries)
-    puts "Restart game? [y/n]\n"
+    puts "Restart game? [y/N]\n"
     if benchmark
       return false if tries == max_tries
 
