@@ -21,10 +21,4 @@
 - Codemaker
 - CPU vs CPU (+ bonus mode: benchmark)
 
-## Configuration
-
-Modify the config.rb file to toggle benchmark on or off
-
-Change the total benchmark rounds in mastermind.rb
-
 Have fun!
