@@ -6,9 +6,4 @@ module Config
   def benchmark
     true
   end
-
-  # # Set benchmark tries
-  # def max_tries
-  #   10
-  # end
 end

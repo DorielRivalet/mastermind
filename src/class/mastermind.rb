@@ -43,7 +43,7 @@ class Mastermind < Board
     slots: 4,
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
-    max_rounds: 1000, # for benchmarking
+    max_rounds: 10_000, # for benchmarking
     game_modes: ['Code Cracker', 'Code Maker', 'CPU vs CPU'],
     slot_types: %i[code_pegs key_pegs]
   }

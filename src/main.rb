@@ -3,6 +3,9 @@
 # load Mastermind class
 require './class/mastermind'
 
+# load benchmark utility
+require 'benchmark'
+
 # # load math module for percent function
 # require './module/math_extend'
 
@@ -12,8 +15,9 @@ def main
   mastermind = Mastermind.new
 
   # Launch game
-  mastermind.play_game
-
+  time = Benchmark.measure { mastermind.play_game }
+  # https://ruby-doc.org/stdlib-1.9.3/libdoc/benchmark/rdoc/Benchmark.html
+  puts "Playtime (user CPU, system CPU , user+system CPU, real time): #{time}"
   puts "Total rounds: #{mastermind.total_rounds}"
   puts "Losses: #{mastermind.losses}"
   puts "Wins: #{mastermind.wins}"
