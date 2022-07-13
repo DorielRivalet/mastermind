@@ -23,7 +23,6 @@ require './class/board'
 
 # load solver algorithms
 require './module/swaszek'
-require './module/doriel'
 
 # load config
 require './config/config'
@@ -50,10 +49,6 @@ class Mastermind < Board
   }
 
   def play_game
-    # p @slots
-    # p @options.length
-    # puts "All possible permutations of valid codes: #{@all_permutations_per_turn.length}"
-    # p @all_permutations_per_turn
     loop do
       game_mode = benchmark ? 3 : select_game_mode_from_array(@game_modes)
       play_rounds(game_mode)
@@ -85,7 +80,6 @@ class Mastermind < Board
     announce_code_maker_win if @turn >= @max_turns && !guessed_code_correct?
 
     if guessed_code_correct? || @turn >= @max_turns
-      # p add_points(game_mode, guessed_code_correct?, @turn >= @max_turns, @wins, @losses)
       return add_points(game_mode, guessed_code_correct?, @turn >= @max_turns)
     end
 
@@ -93,17 +87,13 @@ class Mastermind < Board
   end
 
   def add_points(game_mode, condition1, condition2)
-    #  p condition1, condition2
     if [1, 3].include?(game_mode)
-      # p 'aa'
       condition1 ? @wins += 1 : @losses += 1
     end
 
     if game_mode == 2
-      # p 'bb'
       condition2 ? @wins += 1 : @losses += 1
     end
-    # p 'cc'
     'Points added!' # truthy
   end
 
@@ -112,12 +102,13 @@ class Mastermind < Board
   end
 
   def check_code(game_mode)
-    if game_mode == 1
+    case game_mode
+    when 1
       until valid_input?(@code_guess)
         @code_guess = gets.chomp.to_s
         puts 'Wrong input' unless valid_input?(@code_guess)
       end
-    elsif game_mode == 2
+    when 2
       until valid_code?(@code_maker_code)
         @code_maker_code = gets.chomp.to_s
         puts 'Invalid code' unless valid_code?(@code_maker_code)
@@ -146,8 +137,6 @@ class Mastermind < Board
       puts "Insert a code [#{@slots} slots, #{@options.length} colors]"
       check_code(game_mode)
       update_board(@code_guess)
-      # attach debugger
-      # binding.pry
       break if game_end?(game_mode)
 
       @turn += 1

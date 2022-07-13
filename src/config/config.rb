@@ -4,7 +4,7 @@
 module Config
   # Toggle benchmark
   def benchmark
-    false
+    true
   end
 
   # # Set benchmark tries

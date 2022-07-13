@@ -35,7 +35,6 @@ class Board
   # [Board.new] Create default values and draw the initial state
   def initialize
     puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
-    # p @all_slots
     # @all_secret_codes = fill_array_4(@code_pegs.length) # possibilities: 6 to the 4 but this is counting repetition
     # for no repetition the formula is: n! / (n-r)! where n are options and r are slots
     # https://www.mathsisfun.com/combinatorics/combinations-permutations.html
@@ -43,16 +42,7 @@ class Board
     fill_default_board_from_board_data
     fill_default_board_with_static_data
     set_default_game_values
-    # Create the list 1111,...,6666 of all candidate secret codes
-    # @key_pegs = %w[B W]
     # https://stackoverflow.com/questions/4410076/how-can-i-initialize-an-array-inside-a-hash-in-ruby
-    # @code_guess = nil
-    # @turn = 0
-    # @code_maker_code = nil
-    # @game_board = enter_board_data
-    # p "permutations of #{@slots} slots #{@options.length} options without repetition:
-    # #{permutation_without_repetition(@options, @slots)}"
-    # p @all_permutations_per_turn.length
     @wins = 0 # as codebreaker
     @losses = 0 # as codebreaker
     @total_rounds = 1
@@ -107,17 +97,12 @@ class Board
 
   # code_guess = '1234' if code_guess.nil?
   def insert_key_pegs(code_guess)
-    # p @code_maker_code
     code_guess.chars.each_with_index do |char, k|
       k = k.to_i
       if @code_maker_code.chars[k] == char
-        # p "@code_maker_code.chars[k] #{@code_maker_code.chars[k]} == #{v}"
         @game_board[:key_pegs][k + @current_slot] = 'R'
-        # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
       elsif @code_maker_code.chars.include?(char)
-        # p "@code_maker_code.chars.find(v) #{v}"
         @game_board[:key_pegs][k + @current_slot] = 'W'
-        # puts "Inserted at row #{@turn} column #{1 + (k % 4)}"
       end
     end
   end
@@ -145,12 +130,6 @@ class Board
   def set_default_game_values
     fill_default_board
     @game_board = enter_board_data
-    # @wins = 0
-    # @losses = 0
-    # @total_rounds = 0
-    # @code_guess = nil
-    # @turn = 0
-    # @code_maker_code = nil
   end
 
   def guessed_code_correct?
