@@ -16,6 +16,7 @@ def main
 
   # Launch game
   time = Benchmark.measure { mastermind.play_game }
+  puts "Game ended\n\n"
   # https://ruby-doc.org/stdlib-1.9.3/libdoc/benchmark/rdoc/Benchmark.html
   puts "Playtime (user CPU, system CPU , user+system CPU, real time): #{time}"
   puts "Total rounds: #{mastermind.total_rounds}"
@@ -24,7 +25,7 @@ def main
   puts "Winrate: #{mastermind.percent(mastermind.wins, mastermind.total_rounds, 4)}%"
   puts "Average turns: #{mastermind.average_from_array(mastermind.round_ends)}"
   # Show program metadata at game end
-  puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
+  #puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
 end
 
 # Run program

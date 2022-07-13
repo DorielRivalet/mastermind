@@ -10,10 +10,10 @@
 
 ## Usage
 
-- Open terminal, go to a directory
-- `git clone git@github.com:DorielRivalet/mastermind.git`
-- `cd mastermind/src`
-- `ruby main.rb`
+1. Open terminal, go to a directory
+2. `git clone git@github.com:DorielRivalet/mastermind.git`
+3. `cd mastermind/src`
+4. `ruby main.rb`
 
 ## Game modes
 

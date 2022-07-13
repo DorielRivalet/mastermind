@@ -15,8 +15,7 @@ module BoardUi
   extend MathExtend
 
   # Render the board onto the terminal
-  def draw_board(title = nil)
-    show_game_title(title) if title
+  def draw_board
     puts "| #{@end_result[0]} | #{@end_result[1]} | #{@end_result[2]} | #{@end_result[3]}"
     puts '-' * 25
     # 44 45 46 47 from code_pegs|| 44 45 46 47 fromkey_pegs

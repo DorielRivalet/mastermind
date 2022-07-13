@@ -33,9 +33,15 @@ class Mastermind < Board
   # TODO: add to config file instead
   @@board_data = {
     title: "
-    | \/| _  _|_ _ _ _ . _  _|
-    |  |(_|_)|_(-| ||||| )(_|
-       ",
+    ▄▄
+    ▀████▄     ▄███▀                ██                                     ██                  ▀███  
+      ████    ████                  ██                                                           ██  
+      █ ██   ▄█ ██  ▄█▀██▄  ▄██▀████████  ▄▄█▀██▀███▄███▀████████▄█████▄ ▀███ ▀████████▄    ▄█▀▀███  
+      █  ██  █▀ ██ ██   ██  ██   ▀▀ ██   ▄█▀   ██ ██▀ ▀▀  ██    ██    ██   ██   ██    ██  ▄██    ██  
+      █  ██▄█▀  ██  ▄█████  ▀█████▄ ██   ██▀▀▀▀▀▀ ██      ██    ██    ██   ██   ██    ██  ███    ██  
+      █  ▀██▀   ██ ██   ██  █▄   ██ ██   ██▄    ▄ ██      ██    ██    ██   ██   ██    ██  ▀██    ██  
+    ▄███▄ ▀▀  ▄████▄████▀██▄██████▀ ▀████ ▀█████▀████▄  ▄████  ████  ████▄████▄████  ████▄ ▀████▀███▄
+    ",
     slots: 4,
     options: %w[1 2 3 4 5 6],
     max_turns: 12,
@@ -57,7 +63,6 @@ class Mastermind < Board
       @total_rounds += 1
       reset_game_values
     end
-    puts "Game ended\n\nFile: #{__FILE__}, Lines of Code (LOC): #{__LINE__}\n"
   end
 
   def valid_input?(input)
@@ -102,12 +107,12 @@ class Mastermind < Board
     when 1
       until valid_input?(@code_guess)
         @code_guess = gets.chomp.to_s
-        puts 'Wrong input' unless valid_input?(@code_guess)
+        puts "Wrong input, code has to be #{@slots} digits" unless valid_input?(@code_guess)
       end
     when 2
       until valid_code?(@code_maker_code)
         @code_maker_code = gets.chomp.to_s
-        puts 'Invalid code' unless valid_code?(@code_maker_code)
+        puts "Invalid code, code has to be #{@slots} digits" unless valid_code?(@code_maker_code)
       end
     end
   end

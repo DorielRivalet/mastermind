@@ -34,7 +34,6 @@ class Board
 
   # [Board.new] Create default values and draw the initial state
   def initialize
-    puts "File: #{__FILE__}, Lines of Code (LOC): #{__LINE__}"
     # @all_secret_codes = fill_array_4(@code_pegs.length) # possibilities: 6 to the 4 but this is counting repetition
     # for no repetition the formula is: n! / (n-r)! where n are options and r are slots
     # https://www.mathsisfun.com/combinatorics/combinations-permutations.html
@@ -47,8 +46,8 @@ class Board
     @losses = 0 # as codebreaker
     @total_rounds = 1
     @round_ends = []
-    draw_board(@title)
-    puts "R = Red key peg\nW = White key peg\n0 = No key peg\n\n"
+    title ? show_game_title(title) : draw_board
+    puts "R = Red key peg\nW = White key peg\n0 = No key peg\n\n" if title
   end
 
   def fill_default_board_with_static_data
