@@ -18,7 +18,15 @@
 ## Game modes
 
 - Codecracker
+
+![codecracker](./res/img/codecracker.gif)
+
 - Codemaker
+
+![codemaker](./res/img/codemaker.gif)
+
 - CPU vs CPU (+ bonus mode: benchmark)
+
+![benchmark](./res/img/benchmark.gif)
 
 Have fun!
